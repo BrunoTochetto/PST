@@ -1,0 +1,94 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Montserrat", sans-serif;
+}
+
+
+.monoton-regular {
+  font-family: "Monoton", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+
+.montserrat {
+  font-family: "Montserrat", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: weight;
+  font-style: normal;
+}
+
+
+.Equipe {
+    min-height: 100vh;
+    background: linear-gradient(to bottom, #f4a02f, #d62828);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+
+ h1 {
+    font-size: 48px;
+    font-family: "Monoton", sans-serif;
+    color: white;
+    margin-bottom: 50px;
+    letter-spacing: 3px;
+}
+
+
+.box-equipe {
+    width: 100%;
+    max-width: 1200px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 40px;
+    margin-bottom: 4vh;
+}
+
+
+.membro {
+    background: #f1f1f1;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    transition: transform 0.3s ease;
+}
+
+
+.membro:hover {
+    transform: translateY(-8px);
+}
+
+
+.membro img {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+
+.membro h2 {
+    font-size: 20px;
+    margin-bottom: 8px;
+    color: #333;
+}
+
+
+.membro p {
+    font-size: 16px;
+    color: #444;
+    margin-bottom: 5px;
+}
+
+
+.email {
+    font-size: 14px;
+    color: #666;
+}
