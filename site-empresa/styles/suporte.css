@@ -1,0 +1,128 @@
+:root {
+    --tamanho-nav: min(44px, 8svh);
+    font-family: "Montserrat", sans-serif;
+}
+
+* {
+  font-family: "Montserrat", sans-serif;
+}
+
+body {
+    max-width: 100vw;
+    margin: 0;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    background-color: #EBB236;
+}
+
+.monoton-regular {
+  font-family: "Monoton", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.montserrat {
+  font-family: "Montserrat", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: weight;
+  font-style: normal;
+}
+
+.logo {
+    margin-left: 1.5vw;
+}
+
+.Suporte {
+    background-color: #EBB236;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.faq-box {
+    width: 80vw;
+    background-color: #EFEFEF;
+    border-radius: 7vh;
+    padding: 3vh 2vh 3vh 2vh;
+    align-items: flex-start;
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.184);
+}
+
+.faq-box h1 {
+    font-size: 30px;
+    color: #C20207;
+    margin-top: 2vh;
+    font-family: "Monoton", sans-serif;
+}
+
+.faq-box p {
+    font-size: 18px;
+    margin-left: 4vw;
+    max-width: 70vw;
+}
+
+.faq-box .pergunta {
+    font-size: 20px;
+    margin-left: 1vw;
+}
+
+h1 {
+    font-size: 30px;
+    color: black;
+    font-family: "Monoton", sans-serif;
+}
+
+p {
+    font-size: 18px;
+    margin-top: 0.5vh;
+    margin-left: 2vw;
+}
+
+.sectionLinks {
+    height: auto;
+    display: flex;
+    justify-content: space-around;
+    align-items: start;
+    flex-direction: column;
+    padding-bottom: 10vh;
+}
+
+.sectionLinks h1 {
+    text-align: start;
+    width: 80vw;
+    margin-top: 10vh;
+}
+
+.suporte-links {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-left: 5vw;
+}
+.link{
+    width: 370px;
+    height: 150px;
+    margin: 2vh 4vw;
+    background-color: #EFEFEF;
+    border-radius: 40vh;
+    display: flex;
+    flex-direction: row;
+    justify-content:center ;
+    align-items: center;
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.184);
+}
+
+.link a{
+    font-size: 20px;
+}
+
+.link img {
+    height: 100px;
+    border-radius: 100%;
+    margin-left: 2vh;
+    margin-right: 2vh;
+}
+
+
+
+
