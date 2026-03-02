@@ -13,10 +13,6 @@ body {
     margin: 0;
 }
 
-main {
-    margin-top: var(--tamanho-nav);
-}
-
 nav {
     position: sticky;
 
