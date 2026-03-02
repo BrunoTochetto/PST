@@ -1,40 +1,52 @@
 @font-face {
-  font-family: "Listras";
-  src: url("fontes/Monoton/Monoton-Regular.ttf") format("truetype");
+    font-family: "Listras";
+    src: url("fontes/Monoton/Monoton-Regular.ttf") format("truetype");
 }
 
 
 @font-face {
-  font-family: "MontserratCustom";
-  src: url("fontes/Montserrat/static/Montserrat-Thin.ttf") format("truetype");
+    font-family: "MontserratCustom";
+    src: url("fontes/Montserrat/static/Montserrat-Thin.ttf") format("truetype");
 }
 
 
 .monotonV {
-  font-family: "Listras", cursive;
-  color: #a60008;
+    font-family: "Listras", cursive;
+    color: #a60008;
 }
 
 
 .monotonA {
-  font-family: "Listras", cursive;
-  color: #e4ff4a;
+    font-family: "Listras", cursive;
+    color: #e4ff4a;
 }
 
 
-h2, h3, h4, h5 {
-  font-family: "MontserratCustom", sans-serif;
+h2, h3, h5 {
+    font-family: "MontserratCustom", sans-serif;
+}
+
+
+html, body {
+    max-width: 100%;
+    overflow-x: hidden;
+    scroll-snap-type: y mandatory;
+	scroll-behavior: smooth;
 }
 
 
 section {
 	min-height: 120vh;
 	min-width: 100vw;
+	max-width: 100vw;
 	background: #ffffff;
+	scroll-snap-align: start;
+	scroll-snap-stop: always;
 }
 
 
 section:nth-of-type(1){
+	min-height: 90vh;
 	background: linear-gradient(126deg,
 	rgba(255, 255, 255, 1) 0%,
 	rgba(224, 204, 47, 1) 51%,
@@ -44,7 +56,7 @@ section:nth-of-type(1){
 
 section:nth-of-type(2){
 	background: #ffffff;
-	min-height:100vh;
+	min-height: 80vh;
 }
 
 
@@ -54,6 +66,17 @@ section:nth-of-type(3) {
 	rgba(255, 80, 80, 1) 5%, 
 	rgba(255, 71, 71, 1) 95%, 
 	rgba(255, 255, 255, 1) 100%);
+}
+
+
+section:nth-of-type(3) h1, h4{
+	max-width: 60%;
+	margin: 0;
+}
+
+
+section:nth-of-type(3) h1{
+	margin-top: 10%;
 }
 
 
@@ -120,6 +143,11 @@ section:nth-of-type(6){
 }
 
 
+#projContainer h4:nth-of-type(3){
+	margin-bottom: 4vh;
+}
+
+
 #projetos {
 	min-width: 80vw;
 }
@@ -166,7 +194,7 @@ section:nth-of-type(6){
 .info-container {
     display: flex;
     min-width: 80%;
-    justify-content: space-between;
+    justify-content: space-around;
     align-items:center;
 }
 
@@ -178,6 +206,7 @@ section:nth-of-type(6){
 
 .left {
 	font-size: 30px;
+	width: 60%;
 }
 
 
@@ -187,56 +216,101 @@ section:nth-of-type(6){
 
 
 .left img {
-	width: 70%;
+	width: 50%;
 	height: auto;
 }
 
 
+.right {
+    display: flex;
+    justify-content: center;
+    width: 40%;
+}
+
+
+.reviews-column {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    width: 100%;
+}
+
+
 .review-card {
-  background: #f5d7a3;
-  padding: 16px;
-  max-width: 45%;
-  max-height: 28%;
-  border-radius: 12px;
-  margin-bottom: 16px;
-  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.15);
+	width: 30vw;
+	height: 20vh;
+	font-size: 40px;
+    background: #f6e3b5;
+    border-radius: 16px;
+    padding: 20px 22px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+.reviewCard:nth-of-type(2){
+	margin-left: 10vw;
+}
+
+
+.user {
+    font-weight: 600;
+    margin-bottom: 12px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+
+.review-card p {
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin: 12px 0;
+}
+
+
+.review-card span {
+    display: block;
+    font-size: 0.85rem;
+    opacity: 0.8;
 }
 
 
 #problema {
+	margin-top: 5vh;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-	color: red;
+	color: #a60008;
 }
 
 
 #problema h1 {
 	font-size: 60px;
-	margin-bottom: 0;
+	margin-bottom: 1vh;
 }
 
 
 #problema h5 {
 	font-size: 60px;
+	margin-bottom: 7vh;
 }
 		
 		
 #problema img {
-	margin-top: 10%
 	width: 60%;
 	height: auto;
-	margin-left: 15%;
-	margin-bottom: 10%;
+	margin-left: 12%;
+	margin-bottom: 15vh;
 }
 
 
 #problema button {
-	background-color: red;
+	background-color: #a60008;
+	color: white;
+	font-family: MonsterratCustom;
+	font-size: 30px;
 	width: 30%;
 	height: 10vh;
-	border-radius: 5%;
+	border-radius: 3%;
 	border: none;
 }
 		
