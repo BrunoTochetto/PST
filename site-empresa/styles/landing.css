@@ -29,9 +29,9 @@ h2, h3, h5 {
 
 html, body {
     max-width: 100%;
-    overflow-x: hidden;
-    scroll-snap-type: y mandatory;
-	scroll-behavior: smooth;
+    /* overflow-x: hidden;  */
+    scroll-snap-type: y mandatory; 
+	scroll-behavior: smooth; 
 }
 
 
