@@ -195,29 +195,41 @@ section:nth-of-type(6){
     display: flex;
     min-width: 80%;
     justify-content: space-around;
-    align-items:center;
+    align-items: center;
 }
 
 
-.topicos li {
+.topicos h4 {
 	font-family: "MonsterratCustom";
 }
 
 
 .left {
-	font-size: 30px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	font-size: 25px;
 	width: 60%;
-}
-
-
-.left li {
-	margin-bottom : 1em;
+	margin-right: 10%;
 }
 
 
 .left img {
 	width: 50%;
 	height: auto;
+}
+
+
+.left h1 {
+	margin-bottom: 2vh;
+	font-size: 50px;
+}
+
+
+.left h4 {
+	max-width: 100%;
+	margin-bottom: 1vh;
 }
 
 
