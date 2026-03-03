@@ -10,10 +10,20 @@ body {
 }
 
 /* Título principal */
-main h1 {
+main h1{
     text-align: center;
     color: #ffcc66;
     font-size: 70px;
+    margin: 40px 0;
+    letter-spacing: 4px;
+    font-weight: 400;
+    font-family: 'Monoton', regular;
+}
+
+main h2 {
+    text-align: center;
+    color: #ffcc66;
+    font-size: 55px;
     margin: 40px 0;
     letter-spacing: 4px;
     font-weight: 400;

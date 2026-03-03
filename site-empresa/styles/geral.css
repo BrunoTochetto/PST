@@ -15,7 +15,8 @@ body {
 }
 
 main {
-    margin-top: var(--tamanho-nav);
+    /* margin-top: var(--tamanho-nav); */
+    min-height: 90svh;
 }
 
 nav {

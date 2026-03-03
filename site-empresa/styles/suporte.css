@@ -8,6 +8,16 @@ body {
     background-color: #EBB236;
 }
 
+main h1{
+    text-align: center;
+    color: #ff6666;
+    font-size: 70px;
+    margin: 40px 0;
+    letter-spacing: 4px;
+    font-weight: 400;
+    font-family: 'Monoton', regular;
+}
+
 .monoton-regular {
   font-family: "Monoton", sans-serif;
   font-weight: 400;
@@ -87,6 +97,7 @@ p {
     width: 80vw;
     margin-top: 10vh;
     font-weight: 500;
+    
 }
 
 .suporte-links {
@@ -103,7 +114,7 @@ p {
     border-radius: 40vh;
     display: flex;
     flex-direction: row;
-    justify-content:center ;
+    justify-content: space-evenly ;
     align-items: center;
     box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.184);
 }
