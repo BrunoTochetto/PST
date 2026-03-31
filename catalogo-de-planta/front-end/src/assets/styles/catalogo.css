@@ -1,0 +1,36 @@
+#pesquisa {
+   height: 2rem;
+   width: 20rem;
+
+   display: flex;
+   justify-content: right;
+
+   border: solid black 1px;
+   border-radius: 20px;
+   backdrop-filter: blur(10px);
+   -webkit-backdrop-filter: blur(10px);
+
+   & input {
+      background-color: var(--bg);
+      width: 85%;
+
+      border: 0;
+      padding: 0;
+
+      color: var(--text);
+      font-size: 1rem;
+
+      &::selection {
+         border: 0;
+      }
+   }
+
+}
+
+.catalogado {
+   background-color: antiquewhite;
+   height: 20vw;
+   width: 20vw;
+   border-radius: 20px;
+   margin: 1%;
+}
