@@ -2,7 +2,11 @@ import pkg from 'pg';
 const { Pool } = pkg;
 
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
+  user: 'postgres',
+  host: 'localhost',
+  database: 'catalogo_plantas',
+  password: '1234',
+  port: 5432,
 });
 
 export default {
