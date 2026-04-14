@@ -1,0 +1,4 @@
+CREATE TABLE genero ( id SERIAL PRIMARY KEY, nome VARCHAR(100) NOT NULL ); 
+CREATE TABLE usuarios ( id SERIAL PRIMARY KEY, nome VARCHAR(100), email VARCHAR(100), cep VARCHAR(20) ); 
+CREATE TABLE plantas ( id SERIAL PRIMARY KEY, nome_comum VARCHAR(100), id_genero INT REFERENCES genero(id), id_usuario INT REFERENCES usuarios(id), descricao TEXT, imagem_url TEXT ); 
+CREATE TABLE marcadores ( id SERIAL PRIMARY KEY, id_planta INT REFERENCES plantas(id), latitude FLOAT, longitude FLOAT );
