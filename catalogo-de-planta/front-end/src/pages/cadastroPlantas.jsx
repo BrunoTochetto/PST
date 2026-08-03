@@ -2,9 +2,10 @@ import { useState } from "react";
 import { useNavigate, Navigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import axios from "axios";
-import '../assets/styles/forms.css'
+import '../assets/styles/forms.css';
 
 export default function CadastroPlanta() {
+  const apiUrl = import.meta.env.VITE_API_URL;
   const { isLoggedIn, user } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -42,7 +43,7 @@ export default function CadastroPlanta() {
       id_usuario: user?.id || 1
     };
 
-    axios.post("http://localhost:3000/plants", plantData)
+    axios.post(`${apiUrl}/plants`, plantData)
       .then(response => {
         console.log("Planta cadastrada com sucesso:", response.data);
         navigate("/maps");

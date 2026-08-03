@@ -12,7 +12,6 @@
   "dependencies": {
     "@react-google-maps/api": "^2.20.8",
     "axios": "^1.15.2",
-    "node": "^25.8.2",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "react-router-dom": "^7.14.2"

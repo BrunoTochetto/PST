@@ -8,6 +8,7 @@ import logo from "../assets/images/logo (3).png";
 import "../assets/styles/maps.css";
 
 export default function Maps() {
+  const apiUrl = import.meta.env.VITE_API_URL;
   const [markers, setMarkers] = useState([]);
   const [plants, setPlants] = useState([]);
   const [selected, setSelected] = useState(null);
@@ -48,8 +49,8 @@ export default function Maps() {
     async function loadData() {
       try {
         const [markersRes, plantsRes] = await Promise.all([
-          axios.get("http://localhost:3000/markers"),
-          axios.get("http://localhost:3000/plants"),
+          axios.get(`${apiUrl}/markers`),
+          axios.get(`${apiUrl}/plants`),
         ]);
 
         setPlants(plantsRes.data);
@@ -95,7 +96,7 @@ export default function Maps() {
   const handleSelectPlant = async (plant) => {
     try {
       const res = await axios.post(
-        "http://localhost:3000/markers",
+        `${apiUrl}/markers`,
         {
           id_planta: plant.id,
           latitude: clickedPosition.lat,
@@ -123,7 +124,7 @@ export default function Maps() {
   //  DELETE MARKER
   function handleDelete(id) {
     axios
-      .delete(`http://localhost:3000/markers/${id}`)
+      .delete(`${apiUrl}/markers/${id}`)
       .then(() => {
         setMarkers((prev) => prev.filter((m) => m.id !== id));
         setSelected(null);

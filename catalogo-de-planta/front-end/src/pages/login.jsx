@@ -5,6 +5,7 @@ import { useAuth } from "../context/AuthContext";
 import "../assets/styles/login.css";
 
 export default function Login() {
+  const apiUrl = import.meta.env.VITE_API_URL;
   const { login } = useAuth(); 
   const navigate = useNavigate(); 
 
@@ -17,7 +18,7 @@ export default function Login() {
     e.preventDefault();
 
     try {
-      const { data } = await axios.post("http://localhost:3000/users/validate", {
+      const { data } = await axios.post(`${apiUrl}/users/validate`, {
         email: form.email,
         senha: form.senha
       });

@@ -4,6 +4,7 @@ import "../assets/styles/cadastro.css";
 import { Navigate, useNavigate } from "react-router-dom";
 
 export default function Register() {
+    const apiUrl = import.meta.env.VITE_API_URL;
     const [form, setForm] = useState({
         nome: "",
         email: "",
@@ -18,7 +19,7 @@ export default function Register() {
         e.preventDefault();
 
         try {
-            const res = await fetch("http://localhost:3000/users", {
+            const res = await fetch(`${apiUrl}/users`, {
 
                 /*
                 antes a resposta buscava do port direto do banco, tem q ser o do back

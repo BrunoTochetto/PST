@@ -9,6 +9,7 @@ import axios from 'axios';
 import { useState, useEffect } from "react";
 
 export default function Catalogo() {
+   const apiUrl = import.meta.env.VITE_API_URL;
    const [filtro, setFiltro] = useState('');
    const [plantas, setPlantas] = useState([]);
    const [plantaSelecionada, setPlantaSelecionada] = useState(null);
@@ -17,7 +18,7 @@ export default function Catalogo() {
    useEffect(() => {
       async function fetchPlantas() {
          try {
-            const response = await axios.get('http://localhost:3000/plants');
+            const response = await axios.get(`${apiUrl}/plants`);
             const semValoresNulos = response.data.filter(element => element.nome_comum != null);
             setPlantas(semValoresNulos);
 
