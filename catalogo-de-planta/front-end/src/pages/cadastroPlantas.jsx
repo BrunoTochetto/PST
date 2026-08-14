@@ -2,14 +2,17 @@ import { useState } from "react";
 import { useNavigate, Navigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import axios from "axios";
-import '../assets/styles/cadastroPlanta.css';
+import { GoogleMap, Marker, useJsApiLoader } from "@react-google-maps/api";
+import "../assets/styles/cadastroPlanta.css";
 
 export default function CadastroPlanta() {
   const apiUrl = import.meta.env.VITE_API_URL;
   const { isLoggedIn, user } = useAuth();
   const navigate = useNavigate();
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
   const [form, setForm] = useState({
     name: "",
     genero: "",
@@ -18,9 +21,20 @@ export default function CadastroPlanta() {
     image: null,
   });
 
+  const [location, setLocation] = useState(null);
+
   const imagePreview = form.image
     ? URL.createObjectURL(form.image)
     : null;
+
+  const { isLoaded } = useJsApiLoader({
+    googleMapsApiKey: import.meta.env.VITE_API_KEY_MAPS,
+  });
+
+  const [mapCenter] = useState({
+    lat: -23.55,
+    lng: -46.63,
+  });
 
   if (!isLoggedIn) {
     return <Navigate to="/login" replace />;
@@ -28,14 +42,30 @@ export default function CadastroPlanta() {
 
   function handleChange(e) {
     const { name, value } = e.target;
+
     setForm(prev => ({
       ...prev,
       [name]: value
     }));
   }
 
-  function handleSubmit(e) {
+  function handleMapClick(e) {
+    if (!e.latLng) return;
+
+    setLocation({
+      lat: e.latLng.lat(),
+      lng: e.latLng.lng()
+    });
+  }
+
+  async function handleSubmit(e) {
     e.preventDefault();
+
+    if (!location) {
+      setError("Selecione um local no mapa");
+      return;
+    }
+
     setLoading(true);
     setError("");
 
@@ -46,24 +76,28 @@ export default function CadastroPlanta() {
     plantData.append("descricao", form.description);
     plantData.append("id_usuario", user?.id || 1);
 
+    plantData.append("latitude", location.lat);
+    plantData.append("longitude", location.lng);
+
     if (form.image) {
       plantData.append("imagem", form.image);
     }
 
-axios.post(`${apiUrl}/plants`, plantData);
+    try {
+      const response = await axios.post(`${apiUrl}/plants`, plantData);
 
-    axios.post(`${apiUrl}/plants`, plantData)
+      console.log("Planta cadastrada com sucesso:", response.data);
 
-    axios.post(`${apiUrl}/plants`, plantData)
-      .then(response => {
-        console.log("Planta cadastrada com sucesso:", response.data);
-        navigate("/maps");
-      })
-      .catch(err => {
-        console.error("Erro ao cadastrar planta:", err);
-        setError(err.response?.data?.error || "Erro ao cadastrar planta");
-        setLoading(false);
-      });
+      navigate("/maps");
+    } catch (err) {
+      console.error("Erro ao cadastrar planta:", err);
+
+      setError(
+        err.response?.data?.error || "Erro ao cadastrar planta"
+      );
+
+      setLoading(false);
+    }
   }
 
   function handleImageChange(e) {
@@ -76,7 +110,6 @@ axios.post(`${apiUrl}/plants`, plantData);
       image: file
     }));
   }
-
 
   return (
     <div className="box">
@@ -93,7 +126,7 @@ axios.post(`${apiUrl}/plants`, plantData);
           <form onSubmit={handleSubmit} className="plant-form-wrapper">
             <div className="plant-image-section">
               <label htmlFor="image">URL da imagem:</label>
-              
+
               <input
                 id="image"
                 name="image"
@@ -118,6 +151,7 @@ axios.post(`${apiUrl}/plants`, plantData);
             <div className="plant-fields-section">
               <div className="form-group">
                 <label htmlFor="name">Nome comum</label>
+
                 <input
                   id="name"
                   name="name"
@@ -132,6 +166,7 @@ axios.post(`${apiUrl}/plants`, plantData);
 
               <div className="form-group">
                 <label htmlFor="genero">Gênero</label>
+
                 <input
                   id="genero"
                   name="genero"
@@ -145,6 +180,7 @@ axios.post(`${apiUrl}/plants`, plantData);
 
               <div className="form-group">
                 <label htmlFor="especie">Espécie</label>
+
                 <input
                   id="especie"
                   name="especie"
@@ -158,6 +194,7 @@ axios.post(`${apiUrl}/plants`, plantData);
 
               <div className="form-group">
                 <label htmlFor="description">Descrição</label>
+
                 <textarea
                   id="description"
                   name="description"
@@ -168,15 +205,48 @@ axios.post(`${apiUrl}/plants`, plantData);
                 />
               </div>
             </div>
-          </form>
 
-          <button 
-            type="submit" 
-            className="submit-btn" 
-            disabled={loading}
-          >
-            {loading ? "Salvando..." : "Salvar"}
-          </button>
+            <div>
+              <label>Local da planta</label>
+
+              {isLoaded ? (
+                <GoogleMap
+                  mapContainerStyle={{
+                    width: "100%",
+                    height: "300px"
+                  }}
+                  center={mapCenter}
+                  zoom={10}
+                  onClick={handleMapClick}
+                >
+                  {location && (
+                    <Marker
+                      position={{
+                        lat: location.lat,
+                        lng: location.lng
+                      }}
+                    />
+                  )}
+                </GoogleMap>
+              ) : (
+                <p>Loading map...</p>
+              )}
+
+              {location && (
+                <p>
+                  Local selecionado: {location.lat}, {location.lng}
+                </p>
+              )}
+            </div>
+
+            <button
+              type="submit"
+              className="submit-btn"
+              disabled={loading}
+            >
+              {loading ? "Salvando..." : "Salvar"}
+            </button>
+          </form>
         </div>
       </div>
     </div>

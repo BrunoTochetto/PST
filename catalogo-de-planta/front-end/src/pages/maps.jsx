@@ -20,7 +20,7 @@ export default function Maps() {
   // const navigate = useNavigate();
 
 	const { isLoaded } = useJsApiLoader({
-		googleMapsApiKey: import.meta.env.API_KEY_MAPS,
+		googleMapsApiKey: import.meta.env.VITE_API_KEY_MAPS,
 	});
 
   const [center, setCenter] = useState({
