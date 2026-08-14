@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate, Navigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import axios from "axios";
-import '../assets/styles/forms.css';
+import '../assets/styles/cadastroPlanta.css';
 
 export default function CadastroPlanta() {
   const apiUrl = import.meta.env.VITE_API_URL;
@@ -15,8 +15,12 @@ export default function CadastroPlanta() {
     genero: "",
     especie: "",
     description: "",
-    image: "",
+    image: null,
   });
+
+  const imagePreview = form.image
+    ? URL.createObjectURL(form.image)
+    : null;
 
   if (!isLoggedIn) {
     return <Navigate to="/login" replace />;
@@ -35,13 +39,20 @@ export default function CadastroPlanta() {
     setLoading(true);
     setError("");
 
-    const plantData = {
-      nome_comum: form.name,
-      nome_genero: form.genero,
-      descricao: form.description,
-      imagem_url: form.image,
-      id_usuario: user?.id || 1
-    };
+    const plantData = new FormData();
+
+    plantData.append("nome_comum", form.name);
+    plantData.append("nome_genero", form.genero);
+    plantData.append("descricao", form.description);
+    plantData.append("id_usuario", user?.id || 1);
+
+    if (form.image) {
+      plantData.append("imagem", form.image);
+    }
+
+axios.post(`${apiUrl}/plants`, plantData);
+
+    axios.post(`${apiUrl}/plants`, plantData)
 
     axios.post(`${apiUrl}/plants`, plantData)
       .then(response => {
@@ -55,15 +66,17 @@ export default function CadastroPlanta() {
       });
   }
 
-  const isValidImageUrl = (url) => {
-    if (!url) return false;
-    try {
-      new URL(url);
-      return true;
-    } catch {
-      return false;
-    }
-  };
+  function handleImageChange(e) {
+    const file = e.target.files[0];
+
+    if (!file) return;
+
+    setForm(prev => ({
+      ...prev,
+      image: file
+    }));
+  }
+
 
   return (
     <div className="box">
@@ -84,22 +97,17 @@ export default function CadastroPlanta() {
               <input
                 id="image"
                 name="image"
-                type="url"
-                placeholder="https://exemplo.com/imagem.jpg"
-                value={form.image}
-                onChange={handleChange}
+                type="file"
+                accept="image/png, image/jpeg, image/webp"
+                onChange={handleImageChange}
                 disabled={loading}
               />
 
               <div className="image-preview">
-                {isValidImageUrl(form.image ) ? (
-                  <img 
-                    src={form.image} 
+                {imagePreview ? (
+                  <img
+                    src={imagePreview}
                     alt="Preview da planta"
-                    onError={(e) => {
-                      e.target.style.display = 'none';
-                      e.target.parentElement.innerHTML = 'Imagem não encontrada';
-                    }}
                   />
                 ) : (
                   <span>Nenhuma imagem selecionada</span>
@@ -166,7 +174,6 @@ export default function CadastroPlanta() {
             type="submit" 
             className="submit-btn" 
             disabled={loading}
-            onClick={handleSubmit}
           >
             {loading ? "Salvando..." : "Salvar"}
           </button>

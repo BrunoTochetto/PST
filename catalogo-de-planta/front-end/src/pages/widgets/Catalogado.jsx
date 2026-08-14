@@ -1,5 +1,5 @@
 import '../../assets/styles/catalogo.css';
-import logo from '../../assets/images/logo (3).png';
+import logo from '../../assets/images/logoWikiPlant.png';
 
 export default function Catalogado({imagem_url, nome_comum, nome_genero, descricao, key}) {
    return (

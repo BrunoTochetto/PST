@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import axios from "axios";
 import { createPortal } from "react-dom";
-import logo from "../assets/images/logo (3).png";
+import logo from "../assets/images/logoWikiPlant.png";
 import "../assets/styles/maps.css";
 
 export default function Maps() {
@@ -74,7 +74,7 @@ export default function Maps() {
     }
 
     loadData();
-  }, []);
+  }, [apiUrl]);
 
   // CLICK MAP → OPEN MODAL (ONLY FOR LOGGED IN USERS)
   const handleMapClick = (e) => {

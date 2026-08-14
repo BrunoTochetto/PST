@@ -1,16 +1,18 @@
 services:
-  postgres:
+  banco:
     image: postgres:16
     container_name: catalogo-postgres
-    restart: always
+    restart: unless-stopped
     environment:
+      POSTGRES_DB: catalogo_plantas
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: catalogo
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
+      - ./database/seed.sql:/docker-entrypoint-initdb.d/02-seed.sql
 
   backend:
     build: ./back-end
@@ -18,12 +20,13 @@ services:
     ports:
       - "3000:3000"
     depends_on:
-      - postgres
+      - banco
     environment:
-      DB_HOST: postgres
+      DB_HOST: banco
+      DB_PORT: 5432
       DB_USER: postgres
       DB_PASSWORD: postgres
-      DB_NAME: catalogo
+      DB_NAME: catalogo_plantas
 
   frontend:
     build: ./front-end
@@ -32,6 +35,9 @@ services:
       - "5173:5173"
     depends_on:
       - backend
+    volumes:
+    - ./front-end:/app
+    - /app/node_modules
 
 volumes:
   postgres_data:

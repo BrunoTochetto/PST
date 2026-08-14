@@ -1,99 +1,336 @@
+/* =========================================
+   ÁREA PRINCIPAL
+   ========================================= */
+
 .box {
-    width: 100vw;
-    height: 100vh;
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    background-color: #4b6f2a;
-}
-
-.register-container {
-  min-height: 55vh;
-  background: #eaeaea;
+  width: 100vw;
+  min-height: 100dvh;
 
   display: flex;
   justify-content: center;
   align-items: center;
-  border-radius: 5vh;
 
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  box-sizing: border-box;
+
+  background: #f5f7f2;
+
+  padding: 5vh 3vw;
 }
+
+
+/* =========================================
+   CONTAINER DO CADASTRO
+   ========================================= */
+
+.register-container {
+  width: min(90vw, 470px);
+
+  background: #ffffff;
+
+  border: 1px solid #e5eadf;
+  border-radius: 24px;
+
+  box-shadow: 0 12px 35px rgba(36, 99, 2, 0.10);
+
+  box-sizing: border-box;
+}
+
+
+/* =========================================
+   FORMULÁRIO
+   ========================================= */
 
 .register-box {
   width: 100%;
-  max-width: 420px;
+
+  box-sizing: border-box;
 
   display: flex;
   flex-direction: column;
-  gap: 18px;
-  padding: 5vh;
   align-items: center;
+
+  padding: 5vh 4vw;
 }
 
 .register-box h1 {
-  font-size: 28px;
-  margin-bottom: 10px;
+  width: 100%;
+
+  margin: 0 0 3vh;
+
+  color: #246302;
+
+  font-size: clamp(27px, 3vw, 34px);
+  font-weight: 700;
+
+  text-align: left;
 }
 
-/* inputs */
+
+/* =========================================
+   FORM
+   ========================================= */
+
+.register-box form {
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+
+/* =========================================
+   INPUTS
+   ========================================= */
+
 .register-box input {
   width: 100%;
-  padding: 14px;
 
-  border: none;
-  border-radius: 30px;
+  box-sizing: border-box;
 
-  background: #ffffff;
+  padding: 14px 16px;
+
+  margin: 0 0 1.8vh;
+
+  background: #f8faf6;
+  color: #222222;
+
+  border: 1px solid #dce3d6;
+  border-radius: 12px;
+
   outline: none;
 
-  font-size: 14px;
-  margin: 0 0 1.5vh -1vw;
-  
-  color: black;
+  font-size: 15px;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
 }
 
-/* botão */
-.register-box button {
-  margin-top: 10px;
+.register-box input::placeholder {
+  color: #899285;
+}
 
-  background: #4b6f2a;
-  color: white;
+.register-box input:focus {
+  background: #ffffff;
+
+  border-color: #4f8f28;
+
+  box-shadow: 0 0 0 3px rgba(79, 143, 40, 0.12);
+}
+
+
+/* =========================================
+   BOTÃO CADASTRAR
+   ========================================= */
+
+.register-box button[type="submit"] {
+  width: 100%;
+
+  box-sizing: border-box;
+
+  margin-top: 1vh;
+
+  padding: 14px;
+
+  background: #246302;
+  color: #ffffff;
 
   border: none;
-  padding: 12px;
+  border-radius: 12px;
 
-  border-radius: 20px;
+  font-size: 15px;
+  font-weight: 600;
 
   cursor: pointer;
 
-  align-self: center;
-  width: 160px;
+  box-shadow: 0 5px 14px rgba(36, 99, 2, 0.20);
+
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
-.register-box button:hover {
-  background: #3f5e24;
+.register-box button[type="submit"]:hover {
+  background: #1b4902;
+
+  transform: translateY(-2px);
+
+  box-shadow: 0 7px 18px rgba(36, 99, 2, 0.27);
 }
+
+.register-box button[type="submit"]:active {
+  transform: translateY(0);
+}
+
+
+/* =========================================
+   BOTÃO VOLTAR
+   ========================================= */
 
 .btnVoltar {
   position: fixed;
-  top: 20px;
-  left: 20px;
-  font-size: xx-large;
 
-  background: #4b6f2a;
-  color: white;
+  top: 2.5vh;
+  left: 2.5vw;
 
-  border: none;
-  padding: 10px 10px;
+  width: 48px;
+  height: 48px;
 
-  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  box-sizing: border-box;
+
+  background: #ffffff;
+  color: #246302;
+
+  border: 1px solid #dce3d6;
+  border-radius: 50%;
+
+  padding: 0;
+
+  font-size: 25px;
+  font-weight: 500;
+  line-height: 1;
+
   cursor: pointer;
 
-  z-index: 1000; /* garante que fique por cima */
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.10);
+
+  z-index: 1000;
+
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .btnVoltar:hover {
-  background: #3f5e24;
+  background: #246302;
+  color: #ffffff;
+
+  transform: translateY(-2px);
+
+  box-shadow: 0 7px 18px rgba(36, 99, 2, 0.20);
+}
+
+
+/* =========================================
+   TABLET
+   ========================================= */
+
+@media (max-width: 700px) {
+
+  .box {
+    padding: 90px 5vw 4vh;
+
+    align-items: flex-start;
+  }
+
+  .register-container {
+    width: 100%;
+    max-width: 500px;
+
+    border-radius: 20px;
+  }
+
+  .register-box {
+    padding: 4vh 6vw;
+  }
+
+  .register-box h1 {
+    font-size: 29px;
+
+    margin-bottom: 2.5vh;
+  }
+}
+
+
+/* =========================================
+   CELULAR
+   ========================================= */
+
+@media (max-width: 500px) {
+
+  .box {
+    padding: 75px 4vw 4vh;
+  }
+
+  .btnVoltar {
+    top: 16px;
+    left: 16px;
+
+    width: 42px;
+    height: 42px;
+
+    font-size: 22px;
+  }
+
+  .register-container {
+    border-radius: 17px;
+  }
+
+  .register-box {
+    padding: 4vh 6vw;
+  }
+
+  .register-box h1 {
+    font-size: 26px;
+
+    margin-bottom: 2.5vh;
+  }
+
+  .register-box input {
+    padding: 13px 14px;
+
+    font-size: 14px;
+
+    border-radius: 10px;
+
+    margin-bottom: 1.6vh;
+  }
+
+  .register-box button[type="submit"] {
+    padding: 13px;
+
+    font-size: 14px;
+
+    border-radius: 10px;
+  }
+}
+
+
+/* =========================================
+   CELULAR PEQUENO
+   ========================================= */
+
+@media (max-width: 360px) {
+
+  .box {
+    padding-left: 3vw;
+    padding-right: 3vw;
+  }
+
+  .register-box {
+    padding: 3vh 6vw;
+  }
+
+  .register-box h1 {
+    font-size: 24px;
+  }
+
+  .register-box input {
+    padding: 12px;
+
+    font-size: 13px;
+  }
+
+  .register-box button[type="submit"] {
+    padding: 12px;
+  }
 }

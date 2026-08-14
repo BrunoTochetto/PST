@@ -1,252 +1,793 @@
-/* MAP */
+/* =========================================
+   MAPA
+   ========================================= */
+
 .map-container {
   position: relative;
+
   width: 100vw;
-  height: 100vh;
+  height: 100dvh;
+
+  overflow: hidden;
+
+  background: #eef1eb;
+
   z-index: 1;
 }
 
-/* SIDEBAR */
+
+/* =========================================
+   SIDEBAR
+   ========================================= */
+
 .sidebar {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 300px;
-  height: 95.3vh;
-  background: white;
-  padding: 16px;
-  box-shadow: 2px 0 10px rgba(0,0,0,0.2);
+
+  top: 2vh;
+  left: 1.5vw;
+
+  width: min(320px, 25vw);
+  height: calc(100dvh - 4vh);
+
+  box-sizing: border-box;
+
+  padding: 20px;
+
+  background: rgba(255, 255, 255, 0.97);
+
+  border: 1px solid rgba(220, 227, 214, 0.9);
+  border-radius: 20px;
+
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+
   z-index: 100;
+
   overflow-y: auto;
+
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5c3 transparent;
 }
 
-.sidebar img {
-  width: 100%;
-  border-radius: 8px;
-  margin-bottom: 10px;
+
+/* =========================================
+   BOTÃO VOLTAR
+   ========================================= */
+
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+
+  width: fit-content;
+
+  margin-bottom: 20px;
+  padding: 10px 14px;
+
+  background: #f0f6eb;
+  color: #246302;
+
+  border: 1px solid #dce8d5;
+  border-radius: 10px;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  text-decoration: none;
+
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
-/* SELECTED PLANT */
+.back-btn:hover {
+  background: #e4f0dc;
+
+  transform: translateY(-1px);
+
+  box-shadow: 0 4px 10px rgba(36, 99, 2, 0.10);
+}
+
+
+/* =========================================
+   PLANTA SELECIONADA
+   ========================================= */
+
 .plant-details {
-  background: #f9f9f9;
-  padding: 15px;
-  border-radius: 8px;
-  margin-bottom: 15px;
+  padding: 14px;
+
+  background: #f7faf5;
+
+  border: 1px solid #e1e9dc;
+  border-radius: 16px;
 }
 
 .plant-details img {
   width: 100%;
   height: 200px;
+
+  display: block;
+
   object-fit: cover;
-  border-radius: 8px;
-  margin-bottom: 12px;
+
+  border-radius: 12px;
+
+  margin-bottom: 14px;
+
+  background: #e8eee4;
 }
 
 .plant-details h2 {
-  margin: 10px 0 8px 0;
-  font-size: 20px;
-  color: #333;
+  margin: 0 0 8px;
+
+  color: #1a1a1a;
+
+  font-size: 22px;
+  font-weight: 700;
+
+  line-height: 1.2;
 }
 
 .plant-details p {
-  margin: 8px 0;
+  margin: 0;
+
+  color: #60675d;
+
   font-size: 14px;
-  color: #666;
-  line-height: 1.4;
-  max-height: 80px;
+  line-height: 1.5;
+
+  max-height: 90px;
+
   overflow-y: auto;
 }
 
 .plant-details a,
 .plant-details button {
   width: 100%;
-  padding: 10px;
-  margin-top: 10px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 500;
-  font-size: 14px;
-  text-decoration: none;
-  display: inline-block;
+
   box-sizing: border-box;
-  transition: all 0.2s;
+
+  padding: 11px 14px;
+
+  margin-top: 12px;
+
+  border: none;
+  border-radius: 10px;
+
+  cursor: pointer;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  text-decoration: none;
+
+  display: block;
+
+  text-align: center;
+
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
+
+/* Ver mais */
+
 .plant-details a {
-  background-color: #008000;
-  color: white;
-  text-align: center;
+  background: #246302;
+  color: #ffffff;
 }
 
 .plant-details a:hover {
-  background-color: #006600;
-  box-shadow: 0 2px 6px rgba(0, 128, 0, 0.3);
+  background: #1b4902;
+
+  transform: translateY(-1px);
+
+  box-shadow: 0 5px 12px rgba(36, 99, 2, 0.20);
 }
 
+
+/* Excluir */
+
 .plant-details button {
-  background-color: #e74c3c;
-  color: white;
+  background: #fff0f0;
+  color: #b42318;
+
+  border: 1px solid #f4cccc;
 }
 
 .plant-details button:hover {
-  background-color: #c0392b;
-  box-shadow: 0 2px 6px rgba(231, 76, 60, 0.3);
+  background: #ffe2e2;
+
+  box-shadow: 0 4px 10px rgba(180, 35, 24, 0.10);
 }
 
-/* BACK BUTTON */
-.back-btn {
-  margin-bottom: 10px;
-  background-color: #e4f3d3;
-  border-radius: 2vh;
-  color: green;
-  box-shadow: 2px 4px 10px rgba(0,0,0,0.2);
-  padding: 1vh;
-  text-decoration: none;
-}
 
-/* SEARCH */
-.search-box {
+/* =========================================
+   BOTÃO ADICIONAR
+   ========================================= */
+
+.add-btn {
   position: absolute;
-  top: 20px;
-  right: 20px;
-  background: white;
-  border-radius: 3vh;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-  z-index: 100;
-  width: 200px;
+
+  right: 2.5vw;
+  bottom: 3vh;
+
+  width: 56px;
+  height: 56px;
+
   display: flex;
   align-items: center;
   justify-content: center;
+
+  background: #246302;
+  color: #ffffff;
+
+  border: none;
+  border-radius: 50%;
+
+  font-size: 30px;
+  line-height: 1;
+
+  cursor: pointer;
+
+  box-shadow: 0 7px 18px rgba(0, 0, 0, 0.25);
+
+  z-index: 100;
+
+  text-decoration: none;
+
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.add-btn:hover {
+  background: #1b4902;
+
+  transform: translateY(-3px);
+
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.28);
+}
+
+
+/* =========================================
+   BUSCA
+   ========================================= */
+
+.search-box {
+  position: absolute;
+
+  top: 20px;
+  right: 20px;
+
+  width: min(220px, 25vw);
+
+  z-index: 100;
 }
 
 .search-box input {
   width: 100%;
-  height: 4vh;
-  padding: 6px;
-  background-color: white;
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-  border: 1px solid #ccc;
-  color: black;
+  height: 44px;
+
+  box-sizing: border-box;
+
+  padding: 0 15px;
+
+  background: #ffffff;
+
+  border: 1px solid #d9e0d4;
+  border-radius: 12px;
+
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.12);
+
+  color: #222222;
+
   outline: none;
+
+  font-size: 14px;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .search-box input:focus {
-  border-color: green;
+  border-color: #246302;
+
+  box-shadow:
+    0 0 0 3px rgba(36, 99, 2, 0.10),
+    0 5px 15px rgba(0, 0, 0, 0.12);
 }
 
-/* ADD BUTTON */
-.add-btn {
-  position: absolute;
-  bottom: 20px;
-  right: 20px;
-  width: 60px;
-  height: 60px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  background: green;
-  color: white;
-  font-size: 30px;
-  border: none;
-  cursor: pointer;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-  z-index: 100;
-  text-decoration: none;
-}
 
-/* ✅ MODAL */
+/* =========================================
+   MODAL
+   ========================================= */
+
 .modal {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
 
-  background: rgba(0, 0, 0, 0.5);
+  inset: 0;
+
+  width: 100%;
+  height: 100dvh;
+
+  padding: 3vh 3vw;
+
+  box-sizing: border-box;
+
+  background: rgba(15, 25, 12, 0.48);
+
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
 
   display: flex;
   justify-content: center;
   align-items: center;
+
+  overflow-y: auto;
 
   z-index: 1000;
 }
 
-/* MODAL CONTENT */
+
+/* =========================================
+   CONTEÚDO DO MODAL
+   ========================================= */
+
 .modal-content {
-  background: white;
-  padding: 20px;
-  border-radius: 12px;
-  width: 400px;
-  max-height: 80vh;
+  width: min(600px, 100%);
+
+  max-height: 90dvh;
+
+  box-sizing: border-box;
+
+  padding: 28px;
+
+  background: #ffffff;
+
+  border: 1px solid #e1e7dc;
+  border-radius: 22px;
+
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+
   overflow-y: auto;
 
-  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  animation: abrirModal 0.2s ease;
 }
 
-/* PLANTS GRID */
+.modal-content h2 {
+  margin: 0;
+
+  color: #1a1a1a;
+
+  font-size: 25px;
+  font-weight: 700;
+}
+
+@keyframes abrirModal {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+
+/* =========================================
+   LISTA DE PLANTAS
+   ========================================= */
+
 .plant-list {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin: 15px 0;
+
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  gap: 12px;
+
+  margin: 20px 0;
 }
 
+
+/* =========================================
+   ITEM DA PLANTA
+   ========================================= */
+
 .plant-item {
-  cursor: pointer;
-  text-align: center;
+  min-width: 0;
+
+  box-sizing: border-box;
+
   padding: 10px;
-  border-radius: 8px;
-  transition: all 0.2s;
-  border: 1px solid #eee;
+
+  background: #ffffff;
+
+  border: 1px solid #e0e6dc;
+  border-radius: 14px;
+
+  cursor: pointer;
+
   overflow: hidden;
+
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .plant-item:hover {
-  background-color: #f5f5f5;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  background: #f7faf5;
+
+  border-color: #cbdabd;
+
+  transform: translateY(-2px);
+
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
 }
 
 .plant-item img {
   width: 100%;
   height: 120px;
+
+  display: block;
+
   object-fit: cover;
-  border-radius: 6px;
-  margin-bottom: 8px;
+
+  border-radius: 10px;
+
+  margin-bottom: 9px;
+
+  background: #edf1ea;
 }
+
+
+/* =========================================
+   INFORMAÇÕES DA PLANTA
+   ========================================= */
 
 .plant-info {
   display: flex;
   flex-direction: column;
+
   gap: 4px;
+
+  min-width: 0;
 }
 
 .plant-name {
   margin: 0;
+
+  color: #252525;
+
   font-size: 14px;
   font-weight: 600;
-  color: #333;
-  word-break: break-word;
+
+  line-height: 1.3;
+
+  overflow: hidden;
+
+  white-space: nowrap;
+
+  text-overflow: ellipsis;
 }
 
 .plant-genero {
   margin: 0;
+
+  color: #687064;
+
   font-size: 12px;
   font-weight: 500;
-  color: #666;
+
   font-style: italic;
+
+  overflow: hidden;
+
+  white-space: nowrap;
+
+  text-overflow: ellipsis;
 }
 
-.plant-desc {
-  margin: 0;
-  font-size: 11px;
-  color: #999;
-  line-height: 1.2;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
+
+/* =========================================
+   BOTÃO CANCELAR
+   ========================================= */
+
+.modal-content > button {
+  width: 100%;
+
+  padding: 12px;
+
+  background: #f0f1ef;
+  color: #3f443d;
+
+  border: 1px solid #dfe2dc;
+  border-radius: 10px;
+
+  cursor: pointer;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.modal-content > button:hover {
+  background: #e4e6e1;
+
+  transform: translateY(-1px);
+}
+
+
+/* =========================================
+   TABLET
+   ========================================= */
+
+@media (max-width: 1000px) {
+
+  .sidebar {
+    width: 280px;
+  }
+
+  .plant-list {
+    gap: 10px;
+  }
+}
+
+
+/* =========================================
+   TABLET PEQUENO
+   ========================================= */
+
+@media (max-width: 750px) {
+
+  .sidebar {
+    top: 1.5vh;
+    left: 2vw;
+
+    width: 260px;
+
+    height: calc(100dvh - 3vh);
+
+    padding: 16px;
+
+    border-radius: 17px;
+  }
+
+  .plant-details img {
+    height: 170px;
+  }
+
+  .add-btn {
+    right: 3vw;
+    bottom: 3vh;
+  }
+
+  .modal-content {
+    width: min(560px, 92vw);
+
+    padding: 24px;
+  }
+}
+
+
+/* =========================================
+   CELULAR
+   ========================================= */
+
+@media (max-width: 600px) {
+
+  .sidebar {
+    top: auto;
+    left: 2vw;
+    right: 2vw;
+    bottom: 2vh;
+
+    width: auto;
+
+    height: auto;
+    max-height: 42dvh;
+
+    padding: 14px;
+
+    border-radius: 18px;
+
+    overflow-y: auto;
+  }
+
+  .back-btn {
+    margin-bottom: 12px;
+
+    padding: 8px 12px;
+
+    font-size: 13px;
+  }
+
+  .plant-details {
+    padding: 11px;
+
+    border-radius: 14px;
+  }
+
+  .plant-details img {
+    height: 150px;
+
+    border-radius: 10px;
+  }
+
+  .plant-details h2 {
+    font-size: 19px;
+  }
+
+  .plant-details p {
+    max-height: 65px;
+
+    font-size: 13px;
+  }
+
+  .plant-details a,
+  .plant-details button {
+    padding: 10px;
+
+    margin-top: 9px;
+
+    font-size: 13px;
+  }
+
+  /*
+   * O botão fica um pouco acima
+   * da sidebar para continuar acessível.
+   */
+
+  .add-btn {
+    right: 4vw;
+    bottom: calc(44dvh + 2vh);
+
+    width: 50px;
+    height: 50px;
+
+    font-size: 27px;
+  }
+
+  .search-box {
+    top: 15px;
+    right: 15px;
+
+    width: 180px;
+  }
+
+  .search-box input {
+    height: 40px;
+  }
+
+  .modal {
+    padding: 5vh 4vw;
+  }
+
+  .modal-content {
+    width: 100%;
+
+    max-height: 90dvh;
+
+    padding: 20px;
+
+    border-radius: 18px;
+  }
+
+  .modal-content h2 {
+    font-size: 22px;
+  }
+
+  .plant-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    gap: 9px;
+
+    margin: 16px 0;
+  }
+
+  .plant-item {
+    padding: 8px;
+
+    border-radius: 11px;
+  }
+
+  .plant-item img {
+    height: 100px;
+
+    border-radius: 8px;
+  }
+
+  .plant-name {
+    font-size: 13px;
+  }
+
+  .plant-genero {
+    font-size: 11px;
+  }
+}
+
+
+/* =========================================
+   CELULAR PEQUENO
+   ========================================= */
+
+@media (max-width: 400px) {
+
+  .sidebar {
+    max-height: 40dvh;
+
+    bottom: 1.5vh;
+
+    padding: 11px;
+  }
+
+  .plant-details img {
+    height: 120px;
+  }
+
+  .plant-details h2 {
+    font-size: 17px;
+  }
+
+  .plant-details p {
+    max-height: 50px;
+
+    font-size: 12px;
+  }
+
+  .plant-details a,
+  .plant-details button {
+    padding: 9px;
+
+    font-size: 12px;
+  }
+
+  .add-btn {
+    width: 46px;
+    height: 46px;
+
+    right: 4vw;
+
+    font-size: 25px;
+  }
+
+  .modal-content {
+    padding: 16px;
+
+    border-radius: 16px;
+  }
+
+  .modal-content h2 {
+    font-size: 20px;
+  }
+
+  .plant-list {
+    gap: 7px;
+  }
+
+  .plant-item {
+    padding: 7px;
+  }
+
+  .plant-item img {
+    height: 85px;
+  }
+
+  .plant-name {
+    font-size: 12px;
+  }
+
+  .plant-genero {
+    font-size: 10px;
+  }
 }

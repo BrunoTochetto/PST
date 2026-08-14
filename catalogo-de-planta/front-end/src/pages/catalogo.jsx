@@ -2,7 +2,7 @@ import Header from "./widgets/Header";
 import Catalogado from "./widgets/Catalogado";
 import '../assets/styles/catalogo.css';
 import filtroImg from "../assets/images/filtro.png"
-import logo from "../assets/images/logo (3).png"
+import logo from "../assets/images/logoWikiPlant.png"
 import { Link, useSearchParams } from "react-router-dom";
 import axios from 'axios';
 
@@ -35,7 +35,7 @@ export default function Catalogo() {
          }
       }
       fetchPlantas();
-   }, [searchParams]);
+   }, [apiUrl, searchParams]);
 
    function manusearMudancaFiltro(e) {
       setFiltro(e.target.value)
@@ -79,7 +79,7 @@ export default function Catalogo() {
 
             <div id="pesquisa">
                <img src={filtroImg} alt="filtro" className="filtroImg"/>
-               <input type="text" id="pesquisa" value={filtro} onChange={manusearMudancaFiltro} />
+               <input type="text" id="pesquisaInput" value={filtro} onChange={manusearMudancaFiltro} />
             </div>
 
             <section>

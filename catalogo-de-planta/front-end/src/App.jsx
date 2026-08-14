@@ -1,31 +1,64 @@
 import Header from "./pages/widgets/Header";
 import { Link } from "react-router-dom";
-import { Navigate } from "react-router-dom";
 import { useAuth } from "./context/AuthContext";
+import logo from "./assets/images/logoWikiPlant.png";
 
 function App() {
   const { isLoggedIn } = useAuth();
 
   return (
-    <div>
-        <Header/>
-        <main className="principalPag">
-          <h1> Seja bem vindo ao Plantarium! </h1>
-          <p>Deixe registradas aqui as plantas que conhece e conheça as que tem ao seu redor</p>
+    <div className="app-home">
+      <Header />
 
-          <div id="botoes-inicial">
-            <button><Link to='/maps'>Mapa</Link></button>
-            <button><Link to='/catalogo'>Catálogo</Link></button>
-            {!isLoggedIn && (
-              <button><Link to='/login'>Login</Link></button>
-              )}
-            {isLoggedIn && (
-                <button><Link to='/cadastrar-planta'>Cadastrar Planta</Link></button>
-              )}
+      <main className="principalPag">
+        <div className="hero-home">
+
+          <div className="hero-logo">
+            <img src={logo} alt="WikiPlant" />
           </div>
-        </main>
-        <footer></footer>
-      </div>
+
+          <div className="hero-content">
+            <span className="hero-label">WIKIPLANT</span>
+
+            <h1>
+              Conheça, registre e explore
+              <br />
+              as plantas ao seu redor.
+            </h1>
+
+            <p>
+              Um catálogo colaborativo para descobrir, consultar e registrar
+              espécies de plantas presentes em nossa região.
+            </p>
+
+            <div id="botoes-inicial">
+              <Link to="/catalogo" className="btn-principal">
+                Explorar catálogo
+              </Link>
+
+              <Link to="/maps" className="btn-secundario">
+                Explorar mapa
+              </Link>
+
+              {!isLoggedIn && (
+                <Link to="/login" className="btn-login">
+                  Fazer login
+                </Link>
+              )}
+
+              {isLoggedIn && (
+                <Link to="/cadastrar-planta" className="btn-login">
+                  Cadastrar planta
+                </Link>
+              )}
+            </div>
+          </div>
+
+        </div>
+      </main>
+
+      <footer></footer>
+    </div>
   );
 }
 

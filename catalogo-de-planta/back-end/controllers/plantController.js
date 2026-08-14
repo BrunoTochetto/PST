@@ -1,4 +1,5 @@
 import db from '../db.js';
+import cloudinary from "../config/cloudinary.js";
 
 export const getAll = async (req, res) => {
   try {
@@ -39,13 +40,20 @@ export const createPlantEntry = async (req, res) => {
       nome_comum,
       nome_genero,
       id_usuario,
-      descricao,
-      imagem_url
+      descricao
     } = req.body;
+
+    const imagem = req.file;
 
     if (!nome_comum || !nome_genero) {
       return res.status(400).json({
         error: "nome_comum e nome_genero são obrigatórios"
+      });
+    }
+
+    if (!imagem) {
+      return res.status(400).json({
+        error: "A imagem é obrigatória"
       });
     }
 
@@ -61,27 +69,58 @@ export const createPlantEntry = async (req, res) => {
     if (generoResult.rows.length > 0) {
       id_genero = generoResult.rows[0].id;
     } else {
-
       const novoGenero = await db.query(
-        `INSERT INTO genero (nome) VALUES ($1) RETURNING id`,
+        `INSERT INTO genero (nome)
+         VALUES ($1)
+         RETURNING id`,
         [nome_genero.trim()]
       );
 
       id_genero = novoGenero.rows[0].id;
     }
 
+    const uploadResult = await new Promise((resolve, reject) => {
+      const uploadStream = cloudinary.uploader.upload_stream(
+        {
+          folder: "wikiplant/plantas",
+          resource_type: "image"
+        },
+        (error, result) => {
+          if (error) {
+            reject(error);
+          } else {
+            resolve(result);
+          }
+        }
+      );
+
+      uploadStream.end(imagem.buffer);
+    });
+
+    const imagem_url = uploadResult.secure_url;
+
     const result = await db.query(
       `INSERT INTO plantas
        (nome_comum, id_genero, id_usuario, descricao, imagem_url)
        VALUES ($1, $2, $3, $4, $5)
        RETURNING *`,
-      [nome_comum, id_genero, id_usuario, descricao, imagem_url]
+      [
+        nome_comum,
+        id_genero,
+        id_usuario,
+        descricao,
+        imagem_url
+      ]
     );
 
     res.status(201).json(result.rows[0]);
 
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error("Erro ao cadastrar planta:", err);
+
+    res.status(500).json({
+      error: err.message
+    });
   }
 };
 

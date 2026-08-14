@@ -1,195 +1,708 @@
-/* CARD */
+main {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 4vh 4vw;
+}
+
+
+/* =========================================
+   TÍTULO
+   ========================================= */
+
+.tituloPag {
+  margin: 0 0 3vh;
+
+  color: #1a1a1a;
+
+  font-size: clamp(28px, 3vw, 38px);
+  font-weight: 700;
+}
+
+
+/* =========================================
+   PESQUISA
+   ========================================= */
+
+.pesquisa {
+  width: min(100%, 500px);
+  height: 52px;
+
+  display: flex;
+  align-items: center;
+
+  box-sizing: border-box;
+
+  border: 1px solid #d9e0d4;
+  border-radius: 16px;
+
+  background-color: #ffffff;
+
+  box-shadow: 0 4px 14px rgba(36, 99, 2, 0.07);
+
+  overflow: hidden;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.pesquisa:focus-within {
+  border-color: #246302;
+
+  box-shadow:
+    0 0 0 3px rgba(36, 99, 2, 0.10),
+    0 4px 14px rgba(36, 99, 2, 0.08);
+}
+
+.pesquisaInput {
+  flex: 1;
+
+  width: 100%;
+  height: 100%;
+
+  box-sizing: border-box;
+
+  padding: 0 18px 0 4px;
+
+  background-color: #ffffff !important;
+  color: #222222 !important;
+
+  border: none !important;
+  outline: none;
+
+  font-size: 16px;
+  font-family: inherit;
+}
+
+.pesquisaInput::placeholder {
+  color: #8a9285;
+}
+
+.filtroImg {
+  width: 22px;
+  height: 22px;
+
+  margin: 0 12px 0 16px;
+
+  object-fit: contain;
+
+  opacity: 0.65;
+
+  flex-shrink: 0;
+}
+
+
+/* CELULAR */
+
+@media (max-width: 600px) {
+  .pesquisa {
+    width: 100%;
+    height: 50px;
+  }
+
+  .pesquisaInput {
+    font-size: 15px;
+  }
+}
+
+/* =========================================
+   BOTÃO ADICIONAR
+   ========================================= */
+
+.addBtn {
+  position: fixed;
+
+  right: 3vw;
+  bottom: 3vh;
+
+  width: 56px;
+  height: 56px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #246302;
+  color: #ffffff;
+
+  border: none;
+  border-radius: 50%;
+
+  font-size: 30px;
+  font-weight: 400;
+  line-height: 1;
+
+  cursor: pointer;
+
+  box-shadow: 0 6px 18px rgba(36, 99, 2, 0.30);
+
+  text-decoration: none;
+
+  z-index: 100;
+
+  transition:
+    transform 0.2s ease,
+    background-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.addBtn:hover {
+  background: #1b4902;
+
+  transform: translateY(-3px);
+
+  box-shadow: 0 9px 22px rgba(36, 99, 2, 0.36);
+}
+
+.addBtn:active {
+  transform: translateY(0);
+}
+
+
+/* =========================================
+   CATÁLOGO
+   ========================================= */
+
+.catalogoPlantas {
+  width: 100%;
+  overflow-x: hidden;
+
+  margin-top: 3vh;
+
+  display: grid;
+
+  grid-template-columns: repeat(
+    5,
+    minmax(0, 1fr)
+  );
+
+  gap: 24px;
+
+  box-sizing: border-box;
+}
+
+
+/* =========================================
+   CARD
+   ========================================= */
+
 .catalogado {
-  background: #eeffdb; 
-  border-radius: 24px;
+  width: 100%;
+  min-height: 0;
 
-  width: 20vw;
-  min-height: 50svh;
-  padding: 16px;
-  margin-left: 1vw;
+  box-sizing: border-box;
 
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  padding: 14px;
+
+  margin: 0;
 
   display: flex;
   flex-direction: column;
+
   gap: 12px;
+
+  background: #eeffdb;
+
+  border: 1px solid #dceacb;
+  border-radius: 20px;
+
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.09);
+
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.catalogado:hover {
+  transform: translateY(-4px);
+
+  border-color: #c7dcb3;
+
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.13);
 }
 
 .catalogado img {
   width: 100%;
   height: 180px;
+
   object-fit: cover;
 
-  border-radius: 16px;
+  border-radius: 14px;
+
+  background: #e6ecdF;
 }
 
 .catalogado h1 {
-  font-size: 22px;
-  font-weight: 500;
   margin: 0;
+
+  color: #1a1a1a;
+
+  font-size: 20px;
+  font-weight: 600;
+
+  line-height: 1.25;
 }
 
 .infoPlanta {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+
+  gap: 8px;
 }
 
 .infoPlanta h3 {
-  font-size: 16px;
-  font-weight: 400;
   margin: 0;
-  color: #333;
+
+  color: #4c5548;
+
+  font-size: 15px;
+  font-weight: 500;
 }
 
 .infoPlanta p {
-  font-size: 15px;
   margin: 0;
-  color: #222;
-}
 
-.tituloPag {
-  margin-bottom: 3vh;
-}
+  color: #333333;
 
-#pesquisa {
-  height: 2rem;
-  width: 20rem;
+  font-size: 14px;
+  line-height: 1.5;
 
-  display: flex;
-  justify-content: right;
+  max-height: 4.5em;
 
-  border: solid black 1px;
-  border-radius: 20px;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-
-   & input {
-      background-color: var(--bg);
-      width: 85%;
-
-      border: 0;
-      padding: 0;
-
-      color: var(--text);
-      font-size: 1rem;
-
-      &::selection {
-         border: 0;
-      }
-   }
-
+  overflow: hidden;
 }
 
 
-.catalogoPlantas {
-   margin-top: 2vh;
-   display: grid;
-   grid-template-columns: repeat(5, 1fr);
-   grid-template-rows: repeat(6, 1fr);
-   grid-column-gap: 1%;
-   grid-row-gap: 1%;
-
-}
+/* =========================================
+   PAGINAÇÃO
+   ========================================= */
 
 .proximaPagina {
-   margin-top: 3vh;
-   width: 100%;
-   display: flex;
-   justify-content: center;
-   align-items: center;
-   color: var(--manjericao);
-   font-weight: 800;
-}
+  width: 100%;
 
-.addBtn {
-  position: absolute;
-  bottom: 20px;
-  right: 20px;
-  width: 60px;
-  height: 60px;
+  margin-top: 4vh;
+
   display: flex;
-  align-items: center;
   justify-content: center;
-  margin-top: -1.2vh;
-  border-radius: 50%;
-  background: #008000;
-  color: white;
-  font-size: 30px;
-  border: none;
-  cursor: pointer;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-  z-index: 10;
-  text-decoration: none;
+  align-items: center;
+
+  color: #246302;
+
+  font-weight: 700;
 }
 
-.filtroImg {
-   height: 5vh;
-   margin-top: -0.3vh ;
+.proximaPagina p {
+  margin: 0;
 }
 
-/* MODAL */
+
+/* =========================================
+   MODAL
+   ========================================= */
+
 .modal-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
+
+  inset: 0;
+
   width: 100%;
   height: 100%;
 
-  background: rgba(0, 0, 0, 0.3);
+  padding: 3vh 3vw;
+
+  box-sizing: border-box;
+
+  background: rgba(15, 25, 12, 0.48);
+
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
 
   display: flex;
   justify-content: center;
   align-items: center;
 
   z-index: 1000;
+
+  overflow-y: auto;
 }
 
 
+/* =========================================
+   CONTEÚDO DO MODAL
+   ========================================= */
 
-/* esquerda (imagem) */
+.modal-content {
+  width: min(900px, 100%);
+
+  box-sizing: border-box;
+
+  padding: 32px;
+
+  display: grid;
+
+  grid-template-columns: minmax(280px, 350px) minmax(0, 1fr);
+
+  gap: 36px;
+
+  background: #ffffff;
+
+  border-radius: 24px;
+
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+
+  animation: abrirModal 0.2s ease;
+}
+
+@keyframes abrirModal {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+
+/* =========================================
+   IMAGEM DO MODAL
+   ========================================= */
+
+.modal-left {
+  width: 100%;
+}
+
 .modal-left img {
-  width: 350px;
+  width: 100%;
   height: 300px;
+
+  display: block;
+
   object-fit: cover;
 
   border-radius: 16px;
+
+  background: #edf1ea;
 }
 
-/* direita */
+
+/* =========================================
+   TEXTO DO MODAL
+   ========================================= */
+
 .modal-right {
+  min-width: 0;
+
   display: flex;
   flex-direction: column;
+
   gap: 12px;
 }
 
 .modal-right h1 {
   margin: 0;
-  font-size: 28px;
+
+  color: #1a1a1a;
+
+  font-size: clamp(25px, 3vw, 32px);
+  font-weight: 700;
+
+  line-height: 1.2;
 }
 
 .modal-right h3 {
   margin: 0;
-  font-weight: 400;
+
+  color: #246302;
+
+  font-size: 16px;
+  font-weight: 500;
 }
 
 .modal-right p {
-  font-size: 14px;
-  line-height: 1.5;
+  margin: 4px 0 0;
+
+  color: #444444;
+
+  font-size: 15px;
+  line-height: 1.6;
 }
 
 .modal-right span {
   margin-top: auto;
+
+  color: #777777;
+
+  font-size: 13px;
 }
 
 .modal-right button {
-  align-self: flex-end;
+  align-self: flex-start;
 
-  background: #e6e6e6;
+  margin-top: 8px;
+
+  padding: 11px 18px;
+
+  background: #246302;
+  color: #ffffff;
+
   border: none;
-  padding: 10px 16px;
+  border-radius: 10px;
 
-  border-radius: 20px;
   cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease;
 }
 
+.modal-right button:hover {
+  background: #1b4902;
+
+  transform: translateY(-1px);
+}
+
+.modal-right button a {
+  color: #ffffff;
+
+  text-decoration: none;
+
+  font-size: 14px;
+  font-weight: 600;
+}
+
+
+/* =========================================
+   TABLET
+   ========================================= */
+
+@media (max-width: 1100px) {
+
+  main {
+    padding: 4vh 3vw;
+  }
+
+  .catalogoPlantas {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+
+    gap: 20px;
+  }
+
+  .catalogado img {
+    height: 160px;
+  }
+}
+
+
+/* =========================================
+   TABLET PEQUENO
+   ========================================= */
+
+@media (max-width: 850px) {
+
+  .catalogoPlantas {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+
+    gap: 18px;
+  }
+
+  .catalogado {
+    padding: 12px;
+
+    border-radius: 17px;
+  }
+
+  .catalogado img {
+    height: 150px;
+
+    border-radius: 12px;
+  }
+
+  .catalogado h1 {
+    font-size: 18px;
+  }
+
+  .modal-content {
+    grid-template-columns: 1fr;
+
+    max-width: 600px;
+
+    gap: 24px;
+
+    padding: 26px;
+  }
+
+  .modal-left img {
+    height: 280px;
+  }
+}
+
+
+/* =========================================
+   CELULAR
+   ========================================= */
+
+@media (max-width: 600px) {
+
+  main {
+    padding: 3vh 4vw;
+  }
+
+  .tituloPag {
+    font-size: 28px;
+    color: #1b4902;
+
+    margin-bottom: 2.5vh;
+  }
+
+  .pesquisa {
+    width: 100%;
+
+    height: 44px;
+  }
+
+  .catalogoPlantas {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    gap: 14px;
+
+    margin-top: 2.5vh;
+  }
+
+  .catalogado {
+    padding: 10px;
+
+    border-radius: 15px;
+
+    gap: 9px;
+  }
+
+  .catalogado img {
+    height: 135px;
+
+    border-radius: 11px;
+  }
+
+  .catalogado h1 {
+    font-size: 17px;
+  }
+
+  .infoPlanta {
+    gap: 6px;
+  }
+
+  .infoPlanta h3 {
+    font-size: 13px;
+  }
+
+  .infoPlanta p {
+    font-size: 13px;
+    line-height: 1.4;
+
+    max-height: 2.8em;
+
+    overflow: hidden;
+  }
+
+  .addBtn {
+    right: 5vw;
+    bottom: 3vh;
+
+    width: 52px;
+    height: 52px;
+
+    font-size: 28px;
+  }
+
+  .modal-overlay {
+    align-items: flex-start;
+
+    padding: 8vh 4vw 4vh;
+  }
+
+  .modal-content {
+    width: 100%;
+
+    padding: 20px;
+
+    gap: 20px;
+
+    border-radius: 20px;
+  }
+
+  .modal-left img {
+    height: 220px;
+
+    border-radius: 13px;
+  }
+
+  .modal-right h1 {
+    font-size: 25px;
+  }
+
+  .modal-right p {
+    font-size: 14px;
+  }
+
+  .modal-right button {
+    width: 100%;
+
+    align-self: stretch;
+  }
+}
+
+
+/* =========================================
+   CELULAR PEQUENO
+   ========================================= */
+
+@media (max-width: 400px) {
+
+  main {
+    padding: 3vh 3vw;
+  }
+
+  .tituloPag {
+    font-size: 25px;
+  }
+
+  .catalogoPlantas {
+    gap: 10px;
+  }
+
+  .catalogado {
+    padding: 8px;
+
+    border-radius: 13px;
+  }
+
+  .catalogado img {
+    height: 115px;
+
+    border-radius: 9px;
+  }
+
+  .catalogado h1 {
+    font-size: 15px;
+  }
+
+  .infoPlanta h3,
+  .infoPlanta p {
+    font-size: 12px;
+  }
+
+  .modal-content {
+    padding: 16px;
+
+    border-radius: 17px;
+  }
+
+  .modal-left img {
+    height: 190px;
+  }
+}
