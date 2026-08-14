@@ -1,3 +1,30 @@
+===== back-end/db.js =====
+import pkg from 'pg';
+import 'dotenv/config';
+
+const { Pool } = pkg;
+
+const pool = new Pool({
+  user: process.env.DB_USER || 'postgres',
+  host: process.env.DB_HOST || 'localhost',
+  database: process.env.DATABASE || 'catalogo_plantas',
+  password: process.env.DB_PASSWORD || '1234',
+  port: Number(process.env.DB_PORT) || 5432,
+});
+
+console.log("Banco conectado usando host:", process.env.DB_HOST || "localhost");
+
+export default {
+  query: (text, params) => pool.query(text, params),
+};===== back-end/schema.txt =====
+CREATE TABLE genero ( id SERIAL PRIMARY KEY, nome VARCHAR(100) NOT NULL ); 
+
+CREATE TABLE usuarios ( id SERIAL PRIMARY KEY, nome VARCHAR(100), email VARCHAR(100), cep VARCHAR(20), senha VARCHAR(255) ); 
+
+CREATE TABLE plantas ( id SERIAL PRIMARY KEY, nome_comum VARCHAR(100), id_genero INT REFERENCES genero(id), id_usuario INT REFERENCES usuarios(id), descricao TEXT, imagem_url TEXT ); 
+
+CREATE TABLE marcadores ( id SERIAL PRIMARY KEY, id_planta INT REFERENCES plantas(id), latitude FLOAT, longitude FLOAT );
+===== back-end/controllers/plantController.js =====
 import db from '../db.js';
 import cloudinary from "../config/cloudinary.js";
 
@@ -25,9 +52,7 @@ export const getByID = async (req, res) => {
     );
 
     if (result.rows.length === 0) {
-      return res.status(404).json({
-        error: "Planta não encontrada"
-      });
+      return res.status(404).json({ error: "Planta não encontrada" });
     }
 
     res.json(result.rows[0]);
@@ -42,9 +67,7 @@ export const createPlantEntry = async (req, res) => {
       nome_comum,
       nome_genero,
       id_usuario,
-      descricao,
-      latitude,
-      longitude
+      descricao
     } = req.body;
 
     const imagem = req.file;
@@ -58,17 +81,6 @@ export const createPlantEntry = async (req, res) => {
     if (!imagem) {
       return res.status(400).json({
         error: "A imagem é obrigatória"
-      });
-    }
-
-    if (
-      latitude === undefined ||
-      longitude === undefined ||
-      latitude === "" ||
-      longitude === ""
-    ) {
-      return res.status(400).json({
-        error: "latitude e longitude são obrigatórias"
       });
     }
 
@@ -128,25 +140,7 @@ export const createPlantEntry = async (req, res) => {
       ]
     );
 
-    const planta = result.rows[0];
-
-    const marcadorResult = await db.query(
-      `INSERT INTO marcadores
-       (id_planta, latitude, longitude)
-       VALUES ($1, $2, $3)
-       RETURNING *`,
-      [
-        planta.id,
-        latitude,
-        longitude
-      ]
-    );
-
-    res.status(201).json({
-      ...planta,
-      latitude: marcadorResult.rows[0].latitude,
-      longitude: marcadorResult.rows[0].longitude
-    });
+    res.status(201).json(result.rows[0]);
 
   } catch (err) {
     console.error("Erro ao cadastrar planta:", err);
@@ -157,10 +151,10 @@ export const createPlantEntry = async (req, res) => {
   }
 };
 
+
 export const updatePlant = async (req, res) => {
   try {
     const { id } = req.params;
-
     const {
       nome_comum,
       id_genero,
@@ -178,14 +172,7 @@ export const updatePlant = async (req, res) => {
           imagem_url = $5
       WHERE id = $6
       RETURNING *
-    `, [
-      nome_comum,
-      id_genero,
-      id_usuario,
-      descricao,
-      imagem_url,
-      id
-    ]);
+    `, [nome_comum, id_genero, id_usuario, descricao, imagem_url, id]);
 
     res.json(result.rows[0]);
   } catch (err) {
@@ -202,38 +189,35 @@ export const deletePlant = async (req, res) => {
       [id]
     );
 
-    res.json({
-      message: "Planta deletada"
-    });
+    res.json({ message: "Planta deletada" });
   } catch (err) {
-    res.status(500).json({
-      error: err.message
-    });
+    res.status(500).json({ error: err.message });
   }
 };
 
+
 export const getFirst36 = async (req, res) => {
   try {
+
     const result = await db.query(
       `SELECT * FROM plantas LIMIT 36`
     );
 
     res.json(result.rows);
-  } catch (err) {
-    res.status(500).json({
-      error: err.message
-    });
+
+  }catch (err) {
+    res.status(500).json({error: err.message});
   }
-};
+}
+
 
 export const getFirstN = async (req, res) => {
   try {
+
     const { count } = req.params;
 
     if (!count || isNaN(count) || count <= 0) {
-      return res.status(400).json({
-        error: "faz favor né bicho"
-      });
+      return res.status(400).json({ error: "faz favor né bicho" });
     }
 
     const result = await db.query(
@@ -242,9 +226,82 @@ export const getFirstN = async (req, res) => {
     );
 
     res.json(result.rows);
-  } catch (err) {
-    res.status(500).json({
-      error: err.message
-    });
+
+  }catch (err) {
+    res.status(500).json({error: err.message});
   }
-};
+}
+
+
+===== back-end/routes/plantRoutes.js =====
+import express from "express";
+import multer from "multer";
+
+import {
+  getAll,
+  getByID,
+  createPlantEntry,
+  deletePlant,
+  getFirst36,
+  getFirstN
+} from "../controllers/plantController.js";
+
+const router = express.Router();
+
+const upload = multer({
+  storage: multer.memoryStorage(),
+
+  limits: {
+    fileSize: 5 * 1024 * 1024
+  },
+
+  fileFilter: (req, file, cb) => {
+    const tiposPermitidos = [
+      "image/jpeg",
+      "image/png",
+      "image/webp"
+    ];
+
+    if (tiposPermitidos.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error("Formato de imagem não permitido"));
+    }
+  }
+});
+
+router.get("/", getAll);
+router.get("/:id", getByID);
+router.get("/first36", getFirst36);
+router.get("/limit/:count", getFirstN);
+
+router.post("/", upload.single("imagem"), createPlantEntry);
+
+router.delete("/:id", deletePlant);
+
+export default router;===== back-end/package.json =====
+{
+  "name": "back-end",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cloudinary": "^2.10.0",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "multer": "^2.2.0",
+    "pg": "^8.20.0"
+  },
+  "type": "module",
+  "description": "",
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}
