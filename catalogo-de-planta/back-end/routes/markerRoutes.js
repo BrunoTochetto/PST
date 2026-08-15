@@ -11,8 +11,8 @@ const router = express.Router();
 
 router.post('/', createMarker);
 router.get('/', getAllMarkers);
-router.get('/:id', getMarkerByID);
 router.get('/plant/:id', getMarkersByPlant);
+router.get('/:id', getMarkerByID);
 router.delete('/:id', deleteMarker);
 
 export default router;

@@ -441,41 +441,77 @@ main {
   font-size: 13px;
 }
 
+/* =========================================
+   BOTÕES DO MODAL
+   ========================================= */
+
+.modal-botoes {
+   display: flex;
+   align-items: center;
+   gap: 10px;
+
+   margin-top: 8px;
+}
+
+
 .modal-right button {
-  align-self: flex-start;
+   padding: 11px 18px;
 
-  margin-top: 8px;
+   border: none;
+   border-radius: 10px;
 
-  padding: 11px 18px;
+   cursor: pointer;
 
-  background: #246302;
-  color: #ffffff;
-
-  border: none;
-  border-radius: 10px;
-
-  cursor: pointer;
-
-  transition:
-    background-color 0.2s ease,
-    transform 0.2s ease;
+   transition:
+      background-color 0.2s ease,
+      transform 0.2s ease;
 }
 
-.modal-right button:hover {
-  background: #1b4902;
 
-  transform: translateY(-1px);
+/* =========================================
+   BOTÃO MAPA
+   ========================================= */
+
+.mapaBtn {
+   background: #246302;
+   color: #ffffff;
 }
 
-.modal-right button a {
-  color: #ffffff;
 
-  text-decoration: none;
-
-  font-size: 14px;
-  font-weight: 600;
+.mapaBtn:hover {
+   background: #1b4902;
+   transform: translateY(-1px);
 }
 
+
+.mapaBtn a {
+   color: #ffffff;
+
+   text-decoration: none;
+
+   font-size: 14px;
+   font-weight: 600;
+}
+
+
+/* =========================================
+   BOTÃO EXCLUIR
+   ========================================= */
+
+.excluirBtn {
+   background: #f3f3f3;
+   color: #b42318;
+
+   border: 1px solid #e0b4b0 !important;
+}
+
+
+.excluirBtn:hover {
+   background: #fff0ee;
+   color: #a11910;
+
+   transform: translateY(-1px);
+}
 
 /* =========================================
    TABLET

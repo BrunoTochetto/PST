@@ -14,11 +14,11 @@ function App() {
         <div className="hero-home">
 
           <div className="hero-logo">
-            <img src={logo} alt="WikiPlant" />
+            <img src={logo} alt="Plantarium" />
           </div>
 
           <div className="hero-content">
-            <span className="hero-label">WIKIPLANT</span>
+            <span className="hero-label">PLANTARIUM</span>
 
             <h1>
               Conheça, registre e explore

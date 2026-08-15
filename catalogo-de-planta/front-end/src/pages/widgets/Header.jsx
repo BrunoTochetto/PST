@@ -12,8 +12,8 @@ export default function Header() {
         return (
           <header>
             <Link to="/" className="brand">
-              <img src={logo} alt="WikiPlant" className="logo" />
-              <span className="brand-name">WikiPlant</span>
+              <img src={logo} alt="Plantarium" className="logo" />
+              <span className="brand-name">Plantarium</span>
             </Link>
 
             <nav className="linksNav">

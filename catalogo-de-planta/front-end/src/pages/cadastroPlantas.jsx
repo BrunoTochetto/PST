@@ -86,9 +86,18 @@ export default function CadastroPlanta() {
     try {
       const response = await axios.post(`${apiUrl}/plants`, plantData);
 
-      console.log("Planta cadastrada com sucesso:", response.data);
+      const plantaCriada = response.data;
 
-      navigate("/maps");
+      await axios.post(`${apiUrl}/markers`, {
+        id_planta: plantaCriada.id,
+        latitude: location.lat,
+        longitude: location.lng,
+      });
+
+      console.log("Planta e marcador cadastrados com sucesso:", plantaCriada);
+
+      navigate(`/maps?id=${plantaCriada.id}`);
+      
     } catch (err) {
       console.error("Erro ao cadastrar planta:", err);
 

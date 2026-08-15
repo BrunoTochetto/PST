@@ -68,6 +68,25 @@ export default function Catalogo() {
       );
       }
 
+      async function excluirPlanta() {
+         if (!window.confirm("Tem certeza que deseja excluir esta planta?")) {
+            return;
+         }
+
+         try {
+            await axios.delete(`${apiUrl}/plants/${plantaSelecionada.id}`);
+
+            setPlantas(prev =>
+               prev.filter(planta => planta.id !== plantaSelecionada.id)
+            );
+
+            setPlantaSelecionada(null);
+         } catch (error) {
+            console.error("Erro ao excluir planta:", error);
+            alert("Não foi possível excluir a planta.");
+         }
+      }
+
 
    return (
       <div>
@@ -77,9 +96,16 @@ export default function Catalogo() {
 
             <Link to={"/cadastrar-planta"} className="addBtn">+</Link>
 
-            <div id="pesquisa">
+            <div class="pesquisa" id="pesquisa">
                <img src={filtroImg} alt="filtro" className="filtroImg"/>
-               <input type="text" id="pesquisaInput" value={filtro} onChange={manusearMudancaFiltro} />
+               <input 
+                  type="text"
+                  className="pesquisaInput"
+                  placeholder="Pesquisar planta..."
+                  value={filtro}
+                  onChange={manusearMudancaFiltro} 
+               />
+               
             </div>
 
             <section>
@@ -109,7 +135,20 @@ export default function Catalogo() {
 
                      <span>Por: usuário</span>
 
-                     <button><Link to="/maps">Conferir no mapa</Link></button>
+                     <div className="modal-botoes">
+                        <button className="mapaBtn">
+                           <Link to={`/maps?id=${plantaSelecionada.id}`}>
+                              Conferir no mapa
+                           </Link>
+                        </button>
+
+                        <button
+                           className="excluirBtn"
+                           onClick={excluirPlanta}
+                        >
+                           Excluir planta
+                        </button>
+                     </div>
                      </div>
                   </div>
                </div>

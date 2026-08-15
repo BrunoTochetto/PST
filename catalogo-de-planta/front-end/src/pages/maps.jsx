@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { GoogleMap, Marker, useJsApiLoader } from "@react-google-maps/api";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import axios from "axios";
 import { createPortal } from "react-dom";
@@ -12,6 +12,8 @@ export default function Maps() {
   const [markers, setMarkers] = useState([]);
   const [plants, setPlants] = useState([]);
   const [selected, setSelected] = useState(null);
+
+  const [searchParams] = useSearchParams();
 
   const [showModal, setShowModal] = useState(false);
   const [clickedPosition, setClickedPosition] = useState(null);
@@ -46,35 +48,54 @@ export default function Maps() {
 
   //LOAD DATA
   useEffect(() => {
-    async function loadData() {
-      try {
-        const [markersRes, plantsRes] = await Promise.all([
-          axios.get(`${apiUrl}/markers`),
-          axios.get(`${apiUrl}/plants`),
-        ]);
+  async function loadData() {
+    try {
+      const [markersRes, plantsRes] = await Promise.all([
+        axios.get(`${apiUrl}/markers`),
+        axios.get(`${apiUrl}/plants`),
+      ]);
 
-        setPlants(plantsRes.data);
+      setPlants(plantsRes.data);
 
-        const plantsMap = {};
-        plantsRes.data.forEach((p) => {
-          plantsMap[p.id] = p;
-        });
+      const plantsMap = {};
 
-        const formatted = markersRes.data.map((m) => ({
-          id: m.id,
-          lat: m.latitude,
-          lng: m.longitude,
-          plant: plantsMap[m.id_planta],
-        }));
+      plantsRes.data.forEach((p) => {
+        plantsMap[p.id] = p;
+      });
 
-        setMarkers(formatted);
-      } catch (err) {
-        console.error("Erro ao carregar dados:", err);
+      const formatted = markersRes.data.map((m) => ({
+        id: m.id,
+        lat: m.latitude,
+        lng: m.longitude,
+        plant: plantsMap[m.id_planta],
+      }));
+
+      setMarkers(formatted);
+
+      const plantaId = searchParams.get("id");
+
+      if (plantaId) {
+        const marcador = formatted.find(
+          (marker) => marker.plant?.id === parseInt(plantaId)
+        );
+
+        if (marcador) {
+          setSelected(marcador);
+
+          setCenter({
+            lat: marcador.lat,
+            lng: marcador.lng,
+          });
+        }
       }
-    }
 
-    loadData();
-  }, [apiUrl]);
+    } catch (err) {
+      console.error("Erro ao carregar dados:", err);
+    }
+  }
+
+  loadData();
+}, [apiUrl, searchParams]);
 
   // CLICK MAP → OPEN MODAL (ONLY FOR LOGGED IN USERS)
   const handleMapClick = (e) => {
@@ -142,13 +163,25 @@ export default function Maps() {
 					zoom={10}
 					onClick={handleMapClick}
 				>
-					{markers.map((marker) => (
-						<Marker
-							key={marker.id}
-							position={{ lat: marker.lat, lng: marker.lng }}
-							onClick={() => setSelected(marker)}
-						/>
-					))}
+					{markers.map((marker) => {
+            const isSelected = selected?.id === marker.id;
+
+            return (
+                <Marker
+                  key={marker.id}
+                  position={{ lat: marker.lat, lng: marker.lng }}
+                  onClick={() => setSelected(marker)}
+                  icon={{
+                      url: isSelected
+                        ? "http://maps.google.com/mapfiles/ms/icons/green-dot.png"
+                        : "http://maps.google.com/mapfiles/ms/icons/red-dot.png",
+                      scaledSize: isSelected
+                        ? new window.google.maps.Size(48, 48)
+                        : new window.google.maps.Size(32, 32),
+                  }}
+                />
+            );
+          })}
 				</GoogleMap>
 			) : (
 				<p>Loading map...</p>
