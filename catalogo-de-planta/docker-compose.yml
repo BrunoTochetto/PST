@@ -15,7 +15,7 @@ services:
       - ./database/seed.sql:/docker-entrypoint-initdb.d/02-seed.sql
 
   backend:
-    build: ./back-end
+    image: bruna057/catalogo-de-planta-backend:latest
     container_name: catalogo-backend
     ports:
       - "3000:3000"
@@ -29,15 +29,12 @@ services:
       DB_NAME: catalogo_plantas
 
   frontend:
-    build: ./front-end
+    image: bruna057/catalogo-de-planta-frontend:latest
     container_name: catalogo-frontend
     ports:
       - "5173:5173"
     depends_on:
       - backend
-    volumes:
-    - ./front-end:/app
-    - /app/node_modules
 
 volumes:
   postgres_data:
