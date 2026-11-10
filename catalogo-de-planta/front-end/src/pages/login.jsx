@@ -13,9 +13,11 @@ export default function Login() {
     email: "",
     senha: ""
   });
+  const [loading, setLoading] = useState(false);
 
   async function handleLogin(e) {
     e.preventDefault();
+    setLoading(true);
 
     try {
       const { data } = await axios.post(`${apiUrl}/users/validate`, {
@@ -23,54 +25,60 @@ export default function Login() {
         senha: form.senha
       });
 
-      if (data.valid && data.user) {
-        login(data.user);
+      if (data.valid && data.user && data.token) {
+        login(data.user, data.token);
         navigate("/");
+      } else {
+        alert("Resposta inesperada do servidor");
       }
     } catch (error) {
       const errorMsg = error.response?.data?.error || "Erro ao fazer login";
       alert(errorMsg);
       console.error("Erro ao conectar com backend:", error);
+    } finally {
+      setLoading(false);
     }
-
   }
 
   return (
- <div className="box">
-
-    <button onClick={() => navigate(-1)} className="btnVoltar">
+    <div className="box">
+      <button onClick={() => navigate(-1)} className="btnVoltar">
         ← 
-    </button>
-  <div className="login-container">
-    <div className="login-box">
-      <h1>Login</h1>
+      </button>
+      <div className="login-container">
+        <div className="login-box">
+          <h1>Login</h1>
 
-      <form onSubmit={handleLogin}>
-        <input
-          type="email"
-          placeholder="Email"
-          value={form.email}
-          onChange={(e) => setForm({ ...form, email: e.target.value })}
-          required
-        />
+          <form onSubmit={handleLogin}>
+            <input
+              type="email"
+              placeholder="Email"
+              value={form.email}
+              onChange={(e) => setForm({ ...form, email: e.target.value })}
+              required
+              disabled={loading}
+            />
 
-        <input
-          type="password"
-          placeholder="Senha"
-          value={form.senha}
-          onChange={(e) => setForm({ ...form, senha: e.target.value })}
-          required
-        />
+            <input
+              type="password"
+              placeholder="Senha"
+              value={form.senha}
+              onChange={(e) => setForm({ ...form, senha: e.target.value })}
+              required
+              disabled={loading}
+            />
 
-        <button type="submit">Entrar</button>
-      </form>
+            <button type="submit" disabled={loading}>
+              {loading ? "Entrando..." : "Entrar"}
+            </button>
+          </form>
 
-      <div className="login-footer">
-        <p>Não tem uma conta?</p>
-        <Link to="/register">Cadastre-se</Link>
+          <div className="login-footer">
+            <p>Não tem uma conta?</p>
+            <Link to="/register">Cadastre-se</Link>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-  </div>
-);
+  );
 }

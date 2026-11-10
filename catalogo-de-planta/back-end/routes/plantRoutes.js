@@ -5,20 +5,20 @@ import {
   getAll,
   getByID,
   createPlantEntry,
+  updatePlant,
   deletePlant,
   getFirst36,
   getFirstN
 } from "../controllers/plantController.js";
+import { authenticateToken } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
 const upload = multer({
   storage: multer.memoryStorage(),
-
   limits: {
-    fileSize: 5 * 1024 * 1024
+    fileSize: 10 * 1024 * 1024
   },
-
   fileFilter: (req, file, cb) => {
     const tiposPermitidos = [
       "image/jpeg",
@@ -34,13 +34,15 @@ const upload = multer({
   }
 });
 
+// Rotas públicas (consulta)
 router.get("/", getAll);
-router.get("/:id", getByID);
 router.get("/first36", getFirst36);
 router.get("/limit/:count", getFirstN);
+router.get("/:id", getByID);
 
-router.post("/", upload.single("imagem"), createPlantEntry);
-
-router.delete("/:id", deletePlant);
+// Rotas protegidas (criação, edição e exclusão exigem autenticação)
+router.post("/", authenticateToken, upload.single("imagem"), createPlantEntry);
+router.put("/:id", authenticateToken, updatePlant);
+router.delete("/:id", authenticateToken, deletePlant);
 
 export default router;

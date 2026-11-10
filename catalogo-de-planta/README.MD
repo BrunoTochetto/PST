@@ -1,40 +1,44 @@
-# Catálogo de plantas nativas de uma região (ou global)
+# WikiPlant - Catálogo de Plantas
 
-Um sistema de catálogo de plantas nativas para a preservação e conscientização das plantas nativas na região. Podendo ser usado por professores, biólogos e agricultores.
+Sistema web para catalogação, consulta e geolocalização de espécies de plantas, desenvolvido com React, Node.js (Express) e PostgreSQL.
 
-Um sistema com 2 interfaces principais para 2 tipos de usuários:
+Consulte o [README principal](../../README.md) na raiz do repositório para instruções detalhadas de arquitetura, segurança e roteiro de defesa.
 
-1. **Usuário padrão / público**
-2. **Usuários homologados para a catalogação de plantas e afins.**
+---
 
-As interfaces serão de propósito duplo, sendo para usuários públicos apenas a visualização, e para usuários logados (homologados) a modificação das plantas.
+## 🚀 Execução Rápida
 
-### Interface do catálogo - interface principal
+### 1. Banco de Dados
+Certifique-se de que o banco `catalogo_plantas` foi criado e os scripts foram executados:
+```bash
+psql -U postgres -d catalogo_plantas -f database/schema.sql
+psql -U postgres -d catalogo_plantas -f database/seed.sql
+```
 
-**Para usuários públicos:**
+### 2. Back-end
+```bash
+cd back-end
+npm install
+# Crie o .env conforme .env.example
+npm start
+```
+*Testes automatizados:*
+```bash
+npm test
+```
 
-Uma interface que contem todas as espécies da região, todas com o nome normal e científico, podendo-se filtrar, pesquisar e visualizar as plantas. Junto da sua localização, que irá redirecionar o usuário para o mapa.
+### 3. Front-end
+```bash
+cd front-end
+npm install
+# Crie o .env conforme .env.example
+npm run dev
+```
 
-**Para usuários homologados:**
+---
 
-Será possível registrar novas espécies, criando-a no catálogo com descrição, nomes e afins, e possível adicioná-las no mapa.
+## 👤 Credenciais de Teste
 
-### Interface do mapa - interface principal
-
-**Para usuários públicos:**
-
-Um mapa real via google maps que será possível visualizar todas as espécies e visualiza-las no catálogo em sua íntegra.
-
-**Para usuários homologados:**
-
-Será possível adicionar as localizações de espécies no próprio mapa. Apenas precisando registrar a espécie no catálogo primeiro.
-
-‌
-
-# Possíveis adições:
-
-Mais conteúdos geográficos, como:
-
-- Divisões de rios
-- Áreas de desmatamento
-- Áreas reservadas
+- **Email:** `ana@email.com` | **Senha:** `123456`
+- **Email:** `joao@email.com` | **Senha:** `123456`
+- **Email:** `maria@email.com` | **Senha:** `123456`

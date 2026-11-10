@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, Navigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import axios from "axios";
@@ -16,7 +16,6 @@ export default function CadastroPlanta() {
   const [form, setForm] = useState({
     name: "",
     genero: "",
-    especie: "",
     description: "",
     image: null,
   });
@@ -28,13 +27,30 @@ export default function CadastroPlanta() {
     : null;
 
   const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: import.meta.env.VITE_API_KEY_MAPS,
+    googleMapsApiKey: import.meta.env.VITE_API_KEY_MAPS || "",
   });
 
-  const [mapCenter] = useState({
-    lat: -23.55,
-    lng: -46.63,
+  // Padrão na região das plantas cadastradas (Santa Catarina)
+  const [mapCenter, setMapCenter] = useState({
+    lat: -27.0086,
+    lng: -51.1517,
   });
+
+  useEffect(() => {
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          setMapCenter({
+            lat: pos.coords.latitude,
+            lng: pos.coords.longitude,
+          });
+        },
+        () => {
+          // Mantém o centro padrão caso o usuário negue a localização
+        }
+      );
+    }
+  }, []);
 
   if (!isLoggedIn) {
     return <Navigate to="/login" replace />;
@@ -42,7 +58,6 @@ export default function CadastroPlanta() {
 
   function handleChange(e) {
     const { name, value } = e.target;
-
     setForm(prev => ({
       ...prev,
       [name]: value
@@ -61,8 +76,13 @@ export default function CadastroPlanta() {
   async function handleSubmit(e) {
     e.preventDefault();
 
+    if (!form.image) {
+      setError("Selecione uma imagem para a planta");
+      return;
+    }
+
     if (!location) {
-      setError("Selecione um local no mapa");
+      setError("Selecione a localização da planta clicando no mapa");
       return;
     }
 
@@ -70,24 +90,20 @@ export default function CadastroPlanta() {
     setError("");
 
     const plantData = new FormData();
-
     plantData.append("nome_comum", form.name);
     plantData.append("nome_genero", form.genero);
     plantData.append("descricao", form.description);
-    plantData.append("id_usuario", user?.id || 1);
-
+    plantData.append("id_usuario", user?.id || "");
     plantData.append("latitude", location.lat);
     plantData.append("longitude", location.lng);
-
-    if (form.image) {
-      plantData.append("imagem", form.image);
-    }
+    plantData.append("imagem", form.image);
 
     try {
+      // Criação da planta e do marcador no backend (autenticado)
       const response = await axios.post(`${apiUrl}/plants`, plantData);
-
       const plantaCriada = response.data;
 
+      // Garante criação do marcador caso o backend não o tenha inserido diretamente
       await axios.post(`${apiUrl}/markers`, {
         id_planta: plantaCriada.id,
         latitude: location.lat,
@@ -96,22 +112,20 @@ export default function CadastroPlanta() {
 
       console.log("Planta e marcador cadastrados com sucesso:", plantaCriada);
 
+      // Redireciona para o mapa focando na planta cadastrada
       navigate(`/maps?id=${plantaCriada.id}`);
       
     } catch (err) {
       console.error("Erro ao cadastrar planta:", err);
-
       setError(
         err.response?.data?.error || "Erro ao cadastrar planta"
       );
-
       setLoading(false);
     }
   }
 
   function handleImageChange(e) {
     const file = e.target.files[0];
-
     if (!file) return;
 
     setForm(prev => ({
@@ -130,11 +144,11 @@ export default function CadastroPlanta() {
         <div className="plant-box">
           <h1>Cadastrar Planta</h1>
 
-          {error && <div className="error-message">{error}</div>}
+          {error && <div className="error-message" style={{ color: "#d93025", marginBottom: "15px", fontWeight: "bold" }}>{error}</div>}
 
           <form onSubmit={handleSubmit} className="plant-form-wrapper">
             <div className="plant-image-section">
-              <label htmlFor="image">URL da imagem:</label>
+              <label htmlFor="image">Foto da planta:</label>
 
               <input
                 id="image"
@@ -143,6 +157,7 @@ export default function CadastroPlanta() {
                 accept="image/png, image/jpeg, image/webp"
                 onChange={handleImageChange}
                 disabled={loading}
+                required
               />
 
               <div className="image-preview">
@@ -160,12 +175,11 @@ export default function CadastroPlanta() {
             <div className="plant-fields-section">
               <div className="form-group">
                 <label htmlFor="name">Nome comum</label>
-
                 <input
                   id="name"
                   name="name"
                   type="text"
-                  placeholder="Ex: Rosa"
+                  placeholder="Ex: Ipê Amarelo"
                   value={form.name}
                   onChange={handleChange}
                   required
@@ -175,39 +189,24 @@ export default function CadastroPlanta() {
 
               <div className="form-group">
                 <label htmlFor="genero">Gênero</label>
-
                 <input
                   id="genero"
                   name="genero"
                   type="text"
-                  placeholder="Ex: Rosa"
+                  placeholder="Ex: Handroanthus"
                   value={form.genero}
                   onChange={handleChange}
-                  disabled={loading}
-                />
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="especie">Espécie</label>
-
-                <input
-                  id="especie"
-                  name="especie"
-                  type="text"
-                  placeholder="Ex: Rosa damascena"
-                  value={form.especie}
-                  onChange={handleChange}
+                  required
                   disabled={loading}
                 />
               </div>
 
               <div className="form-group">
                 <label htmlFor="description">Descrição</label>
-
                 <textarea
                   id="description"
                   name="description"
-                  placeholder="Descrição da planta..."
+                  placeholder="Descrição da planta, características, etc."
                   value={form.description}
                   onChange={handleChange}
                   disabled={loading}
@@ -215,17 +214,20 @@ export default function CadastroPlanta() {
               </div>
             </div>
 
-            <div>
-              <label>Local da planta</label>
+            <div style={{ gridColumn: "1 / -1" }}>
+              <label style={{ display: "block", marginBottom: "8px", fontWeight: 600 }}>
+                Local da planta (clique no mapa para marcar a posição)
+              </label>
 
               {isLoaded ? (
                 <GoogleMap
                   mapContainerStyle={{
                     width: "100%",
-                    height: "300px"
+                    height: "350px",
+                    borderRadius: "14px"
                   }}
-                  center={mapCenter}
-                  zoom={10}
+                  center={location || mapCenter}
+                  zoom={12}
                   onClick={handleMapClick}
                 >
                   {location && (
@@ -238,12 +240,12 @@ export default function CadastroPlanta() {
                   )}
                 </GoogleMap>
               ) : (
-                <p>Loading map...</p>
+                <p>Carregando mapa...</p>
               )}
 
               {location && (
-                <p>
-                  Local selecionado: {location.lat}, {location.lng}
+                <p style={{ marginTop: "8px", color: "#246302", fontWeight: 600 }}>
+                  Local selecionado: Lat {location.lat.toFixed(6)}, Lng {location.lng.toFixed(6)}
                 </p>
               )}
             </div>
@@ -252,8 +254,9 @@ export default function CadastroPlanta() {
               type="submit"
               className="submit-btn"
               disabled={loading}
+              style={{ gridColumn: "1 / -1" }}
             >
-              {loading ? "Salvando..." : "Salvar"}
+              {loading ? "Salvando..." : "Salvar Planta"}
             </button>
           </form>
         </div>

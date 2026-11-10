@@ -1,114 +1,113 @@
 import { useState } from "react";
-import Header from "./widgets/Header";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { useAuth } from "../context/AuthContext";
 import "../assets/styles/cadastro.css";
-import { Navigate, useNavigate } from "react-router-dom";
 
 export default function Register() {
-    const apiUrl = import.meta.env.VITE_API_URL;
-    const [form, setForm] = useState({
-        nome: "",
-        email: "",
-        profissao: "",
-        cidade: "",
-        senha: "",
-    });
+  const apiUrl = import.meta.env.VITE_API_URL;
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
-    const navigate = useNavigate();
+  const [form, setForm] = useState({
+    nome: "",
+    email: "",
+    cep: "",
+    senha: "",
+  });
+  const [loading, setLoading] = useState(false);
 
-    async function handleSubmit(e) {
-        e.preventDefault();
+  async function handleSubmit(e) {
+    e.preventDefault();
+    setLoading(true);
 
-        try {
-            const res = await fetch(`${apiUrl}/users`, {
+    try {
+      const response = await axios.post(`${apiUrl}/users`, {
+        nome: form.nome,
+        email: form.email,
+        cep: form.cep,
+        senha: form.senha
+      });
 
-                /*
-                antes a resposta buscava do port direto do banco, tem q ser o do back
-                */
+      const data = response.data;
 
-                method: "POST",
-                headers: {
-                "Content-Type": "application/json",
-                },
-                body: JSON.stringify(form),
-            });
+      if (data.user && data.token) {
+        login(data.user, data.token);
+        alert("Conta criada com sucesso!");
+        navigate("/catalogo");
+      } else {
+        alert("Conta criada com sucesso! Faça login para continuar.");
+        navigate("/login");
+      }
 
-            if (!res.ok) throw new Error("Erro ao cadastrar");
-
-            const data = await res.json();
-
-            // salva usuário como logado
-            localStorage.setItem("user", JSON.stringify(data));
-
-            alert("Usuário criado!");
-
-            setForm({
-                nome: "",
-                email: "",
-                profissao: "",
-                cidade: "",
-                senha: "",
-            });
-
-            // redireciona pra home (ou mapa, ou catálogo)
-            navigate("/catalogo");
-
-        } catch (err) {
-            console.error(err);
-        }}
-
-        return (
-            <>
-            <button onClick={() => navigate(-1)} className="btnVoltar">
-                ← 
-            </button>
-
-            <div className="box">
-              <div className="register-container">
-                <div className="register-box">
-                <h1>Cadastro</h1>
-
-                <form onSubmit={handleSubmit}>
-
-                    <input
-                    type="text"
-                    placeholder="Nome"
-                    value={form.nome}
-                    onChange={(e) => setForm({ ...form, nome: e.target.value })}
-                    />
-
-                    <input
-                    type="email"
-                    placeholder="Email"
-                    value={form.email}
-                    onChange={(e) => setForm({ ...form, email: e.target.value })}
-                    />
-
-                    <input
-                    type="text"
-                    placeholder="Profissão"
-                    value={form.profissao}
-                    onChange={(e) => setForm({ ...form, profissao: e.target.value })}
-                    />
-
-                    <input
-                    type="text"
-                    placeholder="Cidade"
-                    value={form.cidade}
-                    onChange={(e) => setForm({ ...form, cidade: e.target.value })}
-                    />
-
-                    <input
-                    type="password"
-                    placeholder="Senha"
-                    value={form.senha}
-                    onChange={(e) => setForm({ ...form, senha: e.target.value })}
-                    />
-
-                    <button type="submit">Cadastrar</button>
-                </form>
-                </div>
-            </div>
-        </div>
-        </>
-        )
+    } catch (err) {
+      const errorMsg = err.response?.data?.error || "Erro ao cadastrar usuário";
+      alert(errorMsg);
+      console.error("Erro no cadastro:", err);
+    } finally {
+      setLoading(false);
     }
+  }
+
+  return (
+    <>
+      <button onClick={() => navigate(-1)} className="btnVoltar">
+        ← 
+      </button>
+
+      <div className="box">
+        <div className="register-container">
+          <div className="register-box">
+            <h1>Cadastro</h1>
+
+            <form onSubmit={handleSubmit}>
+              <input
+                type="text"
+                placeholder="Nome completo"
+                value={form.nome}
+                onChange={(e) => setForm({ ...form, nome: e.target.value })}
+                required
+                disabled={loading}
+              />
+
+              <input
+                type="email"
+                placeholder="Email"
+                value={form.email}
+                onChange={(e) => setForm({ ...form, email: e.target.value })}
+                required
+                disabled={loading}
+              />
+
+              <input
+                type="text"
+                placeholder="CEP (ex: 89700-000)"
+                value={form.cep}
+                onChange={(e) => setForm({ ...form, cep: e.target.value })}
+                disabled={loading}
+              />
+
+              <input
+                type="password"
+                placeholder="Senha"
+                value={form.senha}
+                onChange={(e) => setForm({ ...form, senha: e.target.value })}
+                required
+                disabled={loading}
+              />
+
+              <button type="submit" disabled={loading}>
+                {loading ? "Cadastrando..." : "Cadastrar"}
+              </button>
+            </form>
+
+            <div className="login-footer" style={{ marginTop: "2vh" }}>
+              <p>Já tem uma conta?</p>
+              <Link to="/login" style={{ color: "#246302", fontWeight: 600 }}>Entrar</Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}

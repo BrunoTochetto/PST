@@ -15,26 +15,32 @@ services:
       - ./database/seed.sql:/docker-entrypoint-initdb.d/02-seed.sql
 
   backend:
-    image: bruna057/catalogo-de-planta-backend:latest
+    build: ./back-end
+    image: catalogo-de-planta-backend:latest
     container_name: catalogo-backend
     ports:
       - "3000:3000"
     depends_on:
       - banco
     environment:
+      PORT: 3000
       DB_HOST: banco
       DB_PORT: 5432
       DB_USER: postgres
       DB_PASSWORD: postgres
       DB_NAME: catalogo_plantas
+      JWT_SECRET: super-secret-key-wikiplant-2026
 
   frontend:
-    image: bruna057/catalogo-de-planta-frontend:latest
+    build: ./front-end
+    image: catalogo-de-planta-frontend:latest
     container_name: catalogo-frontend
     ports:
       - "5173:5173"
     depends_on:
       - backend
+    environment:
+      VITE_API_URL: http://localhost:3000
 
 volumes:
   postgres_data:

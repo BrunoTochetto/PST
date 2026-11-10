@@ -4,9 +4,9 @@
 
 INSERT INTO usuarios (nome, email, cep, senha)
 VALUES
-    ('Ana Silva', 'ana@email.com', '89700-000', '123456'),
-    ('João Santos', 'joao@email.com', '89701-000', '123456'),
-    ('Maria Oliveira', 'maria@email.com', '89702-000', '123456');
+    ('Ana Silva', 'ana@email.com', '89700-000', '$2b$10$03e0VcPxPuHRH3Zqw1Pxmuu1wwFsg4.p4w111kKPmDwMKVwfqNpOW'),
+    ('João Santos', 'joao@email.com', '89701-000', '$2b$10$03e0VcPxPuHRH3Zqw1Pxmuu1wwFsg4.p4w111kKPmDwMKVwfqNpOW'),
+    ('Maria Oliveira', 'maria@email.com', '89702-000', '$2b$10$03e0VcPxPuHRH3Zqw1Pxmuu1wwFsg4.p4w111kKPmDwMKVwfqNpOW');
 
 
 -- =========================

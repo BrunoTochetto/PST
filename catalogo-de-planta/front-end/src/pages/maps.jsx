@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { GoogleMap, Marker, useJsApiLoader } from "@react-google-maps/api";
 import { Link, useSearchParams } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
@@ -19,85 +19,98 @@ export default function Maps() {
   const [clickedPosition, setClickedPosition] = useState(null);
 
   const { isLoggedIn } = useAuth();
-  // const navigate = useNavigate();
 
-	const { isLoaded } = useJsApiLoader({
-		googleMapsApiKey: import.meta.env.VITE_API_KEY_MAPS,
-	});
-
-  const [center, setCenter] = useState({
-    lat: -23.55,
-    lng: -46.63,
+  const { isLoaded } = useJsApiLoader({
+    googleMapsApiKey: import.meta.env.VITE_API_KEY_MAPS || "",
   });
 
-  // Pega a localização atual e coloca como centro, só pra não aparecer em são paulo...
+  // Centro padrão nas coordenadas reais das plantas (Santa Catarina)
+  const [center, setCenter] = useState({
+    lat: -27.0086,
+    lng: -51.1517,
+  });
+
+  const mapRef = useRef(null);
+  const onMapLoad = useCallback((mapInstance) => {
+    mapRef.current = mapInstance;
+  }, []);
+
+  // Pega localização do usuário APENAS se não estiver visualizando uma planta específica
   useEffect(() => {
-    if ("geolocation" in navigator) {
+    const plantaId = searchParams.get("id");
+    if (!plantaId && "geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
         (pos) => {
-          setCenter({
+          const userPos = {
             lat: pos.coords.latitude,
             lng: pos.coords.longitude,
-          });
+          };
+          setCenter(userPos);
+          if (mapRef.current) {
+            mapRef.current.panTo(userPos);
+          }
+        },
+        () => {
+          // Mantém localização padrão de Santa Catarina
         }
       );
     }
-  }, []);
+  }, [searchParams]);
 
-
-
-  //LOAD DATA
+  // Carrega dados de plantas e marcadores
   useEffect(() => {
-  async function loadData() {
-    try {
-      const [markersRes, plantsRes] = await Promise.all([
-        axios.get(`${apiUrl}/markers`),
-        axios.get(`${apiUrl}/plants`),
-      ]);
+    async function loadData() {
+      try {
+        const [markersRes, plantsRes] = await Promise.all([
+          axios.get(`${apiUrl}/markers`),
+          axios.get(`${apiUrl}/plants`),
+        ]);
 
-      setPlants(plantsRes.data);
+        setPlants(plantsRes.data);
 
-      const plantsMap = {};
+        const plantsMap = {};
+        plantsRes.data.forEach((p) => {
+          plantsMap[p.id] = p;
+        });
 
-      plantsRes.data.forEach((p) => {
-        plantsMap[p.id] = p;
-      });
+        const formatted = markersRes.data.map((m) => ({
+          id: m.id,
+          lat: parseFloat(m.latitude),
+          lng: parseFloat(m.longitude),
+          plant: plantsMap[m.id_planta],
+        }));
 
-      const formatted = markersRes.data.map((m) => ({
-        id: m.id,
-        lat: m.latitude,
-        lng: m.longitude,
-        plant: plantsMap[m.id_planta],
-      }));
+        setMarkers(formatted);
 
-      setMarkers(formatted);
+        // Se veio com id da planta na URL, seleciona e centraliza no mapa
+        const plantaId = searchParams.get("id");
+        if (plantaId) {
+          const marcador = formatted.find(
+            (marker) => marker.plant?.id === parseInt(plantaId)
+          );
 
-      const plantaId = searchParams.get("id");
-
-      if (plantaId) {
-        const marcador = formatted.find(
-          (marker) => marker.plant?.id === parseInt(plantaId)
-        );
-
-        if (marcador) {
-          setSelected(marcador);
-
-          setCenter({
-            lat: marcador.lat,
-            lng: marcador.lng,
-          });
+          if (marcador) {
+            setSelected(marcador);
+            const targetPos = {
+              lat: marcador.lat,
+              lng: marcador.lng,
+            };
+            setCenter(targetPos);
+            if (mapRef.current) {
+              mapRef.current.panTo(targetPos);
+            }
+          }
         }
+
+      } catch (err) {
+        console.error("Erro ao carregar dados do mapa:", err);
       }
-
-    } catch (err) {
-      console.error("Erro ao carregar dados:", err);
     }
-  }
 
-  loadData();
-}, [apiUrl, searchParams]);
+    loadData();
+  }, [apiUrl, searchParams]);
 
-  // CLICK MAP → OPEN MODAL (ONLY FOR LOGGED IN USERS)
+  // Clique no mapa para abrir modal de vinculação (apenas logados)
   const handleMapClick = (e) => {
     if (!e.latLng) return;
 
@@ -113,7 +126,7 @@ export default function Maps() {
     setShowModal(true);
   };
 
-  // CREATE MARKER
+  // Cria marcador vinculado a uma planta selecionada (requisição autenticada)
   const handleSelectPlant = async (plant) => {
     try {
       const res = await axios.post(
@@ -125,69 +138,86 @@ export default function Maps() {
         }
       );
 
-      setMarkers((prev) => [
-        ...prev,
-        {
-          id: res.data.id,
-          lat: res.data.latitude,
-          lng: res.data.longitude,
-          plant,
-        },
-      ]);
+      const novoMarcador = {
+        id: res.data.id,
+        lat: parseFloat(res.data.latitude),
+        lng: parseFloat(res.data.longitude),
+        plant,
+      };
 
+      setMarkers((prev) => [...prev, novoMarcador]);
+      setSelected(novoMarcador);
       setShowModal(false);
       setClickedPosition(null);
     } catch (err) {
       console.error("Erro ao criar marcador:", err);
+      alert(err.response?.data?.error || "Erro ao criar marcador.");
     }
   };
 
-  //  DELETE MARKER
+  // Exclui marcador (requisição autenticada)
   function handleDelete(id) {
+    if (!window.confirm("Deseja realmente excluir este marcador?")) {
+      return;
+    }
+
     axios
       .delete(`${apiUrl}/markers/${id}`)
       .then(() => {
         setMarkers((prev) => prev.filter((m) => m.id !== id));
         setSelected(null);
       })
-      .catch((err) => console.error("Erro ao deletar:", err));
+      .catch((err) => {
+        console.error("Erro ao deletar marcador:", err);
+        alert(err.response?.data?.error || "Erro ao deletar marcador.");
+      });
+  }
+
+  function handleMarkerClick(marker) {
+    setSelected(marker);
+    const pos = { lat: marker.lat, lng: marker.lng };
+    setCenter(pos);
+    if (mapRef.current) {
+      mapRef.current.panTo(pos);
+    }
   }
 
   return (
     <div className="map-container">
-      {/* MAP */}
-			{isLoaded ? (
-				<GoogleMap
-					mapContainerStyle={{ width: "100%", height: "100%" }}
-					center={center}
-					zoom={10}
-					onClick={handleMapClick}
-				>
-					{markers.map((marker) => {
+      {/* MAPA */}
+      {isLoaded ? (
+        <GoogleMap
+          mapContainerStyle={{ width: "100%", height: "100%" }}
+          center={center}
+          zoom={12}
+          onLoad={onMapLoad}
+          onClick={handleMapClick}
+        >
+          {markers.map((marker) => {
             const isSelected = selected?.id === marker.id;
 
             return (
-                <Marker
-                  key={marker.id}
-                  position={{ lat: marker.lat, lng: marker.lng }}
-                  onClick={() => setSelected(marker)}
-                  icon={{
-                      url: isSelected
-                        ? "http://maps.google.com/mapfiles/ms/icons/green-dot.png"
-                        : "http://maps.google.com/mapfiles/ms/icons/red-dot.png",
-                      scaledSize: isSelected
-                        ? new window.google.maps.Size(48, 48)
-                        : new window.google.maps.Size(32, 32),
-                  }}
-                />
+              <Marker
+                key={marker.id}
+                position={{ lat: marker.lat, lng: marker.lng }}
+                onClick={() => handleMarkerClick(marker)}
+                icon={{
+                  url: isSelected
+                    ? "https://maps.google.com/mapfiles/ms/icons/green-dot.png"
+                    : "https://maps.google.com/mapfiles/ms/icons/red-dot.png",
+                  scaledSize: isSelected
+                    ? new window.google.maps.Size(48, 48)
+                    : new window.google.maps.Size(32, 32),
+                }}
+              />
             );
           })}
-				</GoogleMap>
-			) : (
-				<p>Loading map...</p>
-			)}
+        </GoogleMap>
+      ) : (
+        <p>Carregando mapa...</p>
+      )}
 
-      {/* SIDEBAR */}
+      {/* BARRA LATERAL COM INFORMAÇÕES DA PLANTA */}
       <div className="sidebar">
         <Link to="/catalogo" className="back-btn">
           ← Catálogo
@@ -195,17 +225,21 @@ export default function Maps() {
 
         {selected ? (
           <>
-            {selected.plant && (
+            {selected.plant ? (
               <div className="plant-details">
                 <img
                   src={selected.plant.imagem_url || logo}
                   alt={selected.plant.nome_comum}
                 />
                 <h2>{selected.plant.nome_comum}</h2>
+                <p><strong>Gênero:</strong> {selected.plant.genero || "Não informado"}</p>
                 <p>{selected.plant.descricao}</p>
+                <p style={{ fontSize: "12px", color: "#666" }}>
+                  Coord: {selected.lat.toFixed(5)}, {selected.lng.toFixed(5)}
+                </p>
 
-                <Link to={`/catalogo?id=${selected.plant.id}`}>
-                  Ver mais
+                <Link to={`/catalogo?id=${selected.plant.id}`} style={{ display: "inline-block", margin: "10px 0" }}>
+                  Ver mais detalhes
                 </Link>
 
                 {isLoggedIn && (
@@ -214,54 +248,53 @@ export default function Maps() {
                   </button>
                 )}
               </div>
+            ) : (
+              <p>Informações da planta vinculada não encontradas.</p>
             )}
           </>
         ) : (
-          <p>Selecione um marcador</p>
+          <p>Selecione um marcador no mapa para ver detalhes da planta.</p>
         )}
       </div>
 
-      {/* SEARCH */}
-      {/* <div className="search-box">
-        <input type="text" placeholder="Buscar..." />
-      </div> */}
+      {/* BOTÃO ADICIONAR */}
+      {isLoggedIn && (
+        <Link to="/cadastrar-planta" className="add-btn" title="Cadastrar nova planta">
+          +
+        </Link>
+      )}
 
-      {/* ADD BUTTON (UNCHANGED as requested) */}
-      <Link to="/cadastrar-planta" className="add-btn">
-        +
-      </Link>
+      {/* MODAL PARA VINCULAR PLANTA AO CLIQUE NO MAPA */}
+      {showModal &&
+        createPortal(
+          <div className="modal">
+            <div className="modal-content">
+              <h2>Selecione uma planta para este local</h2>
 
-      {/* MODAL */}
-			{showModal &&
-				createPortal(
-					<div className="modal">
-						<div className="modal-content">
-							<h2>Selecione uma planta</h2>
+              <div className="plant-list">
+                {plants.map((p) => (
+                  <div
+                    key={p.id}
+                    className="plant-item"
+                    onClick={() => handleSelectPlant(p)}
+                  >
+                    <img src={p.imagem_url || logo} alt={p.nome_comum} />
+                    <div className="plant-info">
+                      <p className="plant-name">{p.nome_comum}</p>
+                      <p className="plant-genero">{p.genero || 'Sem gênero'}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
 
-							<div className="plant-list">
-							{plants.map((p) => (
-                <div
-								key={p.id}
-								className="plant-item"
-								onClick={() => handleSelectPlant(p)}
-							>
-								<img src={p.imagem_url || logo} alt={p.nome_comum} />
-								<div className="plant-info">
-									<p className="plant-name">{p.nome_comum}</p>
-									<p className="plant-genero">{p.genero || 'Sem gênero'}</p>
-								</div>
-									</div>
-								))}
-							</div>
-
-							<button onClick={() => setShowModal(false)}>
-								Cancelar
-							</button>
-						</div>
-					</div>,
-					document.body
-				)
-			}
+              <button onClick={() => setShowModal(false)}>
+                Cancelar
+              </button>
+            </div>
+          </div>,
+          document.body
+        )
+      }
     </div>
   );
 }

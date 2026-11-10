@@ -1,5 +1,17 @@
 import db from '../db.js';
 import cloudinary from "../config/cloudinary.js";
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const uploadsDir = path.join(__dirname, '../uploads');
+
+// Garante que o diretório local de uploads exista
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
 
 export const getAll = async (req, res) => {
   try {
@@ -7,6 +19,7 @@ export const getAll = async (req, res) => {
       SELECT p.*, g.nome AS genero
       FROM plantas p
       LEFT JOIN genero g ON p.id_genero = g.id
+      ORDER BY p.id ASC
     `);
 
     res.json(result.rows);
@@ -20,14 +33,15 @@ export const getByID = async (req, res) => {
     const { id } = req.params;
 
     const result = await db.query(
-      `SELECT * FROM plantas WHERE id = $1`,
+      `SELECT p.*, g.nome AS genero
+       FROM plantas p
+       LEFT JOIN genero g ON p.id_genero = g.id
+       WHERE p.id = $1`,
       [id]
     );
 
     if (result.rows.length === 0) {
-      return res.status(404).json({
-        error: "Planta não encontrada"
-      });
+      return res.status(404).json({ error: "Planta não encontrada" });
     }
 
     res.json(result.rows[0]);
@@ -41,11 +55,13 @@ export const createPlantEntry = async (req, res) => {
     const {
       nome_comum,
       nome_genero,
-      id_usuario,
       descricao,
       latitude,
       longitude
     } = req.body;
+
+    // Obtém o id_usuario autenticado via token, ou do corpo como fallback
+    const id_usuario = req.user?.id || req.body.id_usuario || null;
 
     const imagem = req.file;
 
@@ -55,23 +71,13 @@ export const createPlantEntry = async (req, res) => {
       });
     }
 
-    if (!imagem) {
+    if (!imagem && !req.body.imagem_url) {
       return res.status(400).json({
         error: "A imagem é obrigatória"
       });
     }
 
-    if (
-      latitude === undefined ||
-      longitude === undefined ||
-      latitude === "" ||
-      longitude === ""
-    ) {
-      return res.status(400).json({
-        error: "latitude e longitude são obrigatórias"
-      });
-    }
-
+    // Normaliza gênero
     const generoNormalizado = nome_genero.trim().toLowerCase();
 
     let generoResult = await db.query(
@@ -94,25 +100,48 @@ export const createPlantEntry = async (req, res) => {
       id_genero = novoGenero.rows[0].id;
     }
 
-    const uploadResult = await new Promise((resolve, reject) => {
-      const uploadStream = cloudinary.uploader.upload_stream(
-        {
-          folder: "wikiplant/plantas",
-          resource_type: "image"
-        },
-        (error, result) => {
-          if (error) {
-            reject(error);
-          } else {
-            resolve(result);
-          }
+    let imagem_url = req.body.imagem_url || "";
+
+    if (imagem) {
+      const hasCloudinary =
+        process.env.CLOUDINARY_CLOUD_NAME &&
+        process.env.CLOUDINARY_API_KEY &&
+        process.env.CLOUDINARY_API_SECRET;
+
+      if (hasCloudinary) {
+        try {
+          const uploadResult = await new Promise((resolve, reject) => {
+            const uploadStream = cloudinary.uploader.upload_stream(
+              {
+                folder: "wikiplant/plantas",
+                resource_type: "image"
+              },
+              (error, result) => {
+                if (error) reject(error);
+                else resolve(result);
+              }
+            );
+
+            uploadStream.end(imagem.buffer);
+          });
+
+          imagem_url = uploadResult.secure_url;
+        } catch (cloudErr) {
+          console.warn("Falha no Cloudinary, usando armazenamento local:", cloudErr.message);
         }
-      );
+      }
 
-      uploadStream.end(imagem.buffer);
-    });
+      // Se não enviou para o Cloudinary (ou falhou), salva em disco localmente
+      if (!imagem_url) {
+        const fileExt = path.extname(imagem.originalname) || '.jpg';
+        const sanitizedBase = path.basename(imagem.originalname, fileExt).replace(/[^a-zA-Z0-9_-]/g, '_');
+        const filename = `${Date.now()}-${sanitizedBase}${fileExt}`;
+        const filePath = path.join(uploadsDir, filename);
 
-    const imagem_url = uploadResult.secure_url;
+        await fs.promises.writeFile(filePath, imagem.buffer);
+        imagem_url = `${req.protocol}://${req.get('host')}/uploads/${filename}`;
+      }
+    }
 
     const result = await db.query(
       `INSERT INTO plantas
@@ -120,33 +149,30 @@ export const createPlantEntry = async (req, res) => {
        VALUES ($1, $2, $3, $4, $5)
        RETURNING *`,
       [
-        nome_comum,
+        nome_comum.trim(),
         id_genero,
         id_usuario,
-        descricao,
+        descricao || "",
         imagem_url
       ]
     );
 
-    const planta = result.rows[0];
+    const createdPlant = result.rows[0];
 
-    const marcadorResult = await db.query(
-      `INSERT INTO marcadores
-       (id_planta, latitude, longitude)
-       VALUES ($1, $2, $3)
-       RETURNING *`,
-      [
-        planta.id,
-        latitude,
-        longitude
-      ]
-    );
+    // Se latitude e longitude foram fornecidas no cadastro, insere o marcador
+    if (latitude !== undefined && longitude !== undefined && latitude !== null && longitude !== null && latitude !== '') {
+      const lat = parseFloat(latitude);
+      const lng = parseFloat(longitude);
+      if (!isNaN(lat) && !isNaN(lng)) {
+        await db.query(
+          `INSERT INTO marcadores (id_planta, latitude, longitude)
+           VALUES ($1, $2, $3)`,
+          [createdPlant.id, lat, lng]
+        );
+      }
+    }
 
-    res.status(201).json({
-      ...planta,
-      latitude: marcadorResult.rows[0].latitude,
-      longitude: marcadorResult.rows[0].longitude
-    });
+    res.status(201).json(createdPlant);
 
   } catch (err) {
     console.error("Erro ao cadastrar planta:", err);
@@ -160,14 +186,14 @@ export const createPlantEntry = async (req, res) => {
 export const updatePlant = async (req, res) => {
   try {
     const { id } = req.params;
-
     const {
       nome_comum,
       id_genero,
-      id_usuario,
       descricao,
       imagem_url
     } = req.body;
+
+    const id_usuario = req.user?.id || req.body.id_usuario;
 
     const result = await db.query(`
       UPDATE plantas
@@ -178,14 +204,11 @@ export const updatePlant = async (req, res) => {
           imagem_url = $5
       WHERE id = $6
       RETURNING *
-    `, [
-      nome_comum,
-      id_genero,
-      id_usuario,
-      descricao,
-      imagem_url,
-      id
-    ]);
+    `, [nome_comum, id_genero, id_usuario, descricao, imagem_url, id]);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "Planta não encontrada" });
+    }
 
     res.json(result.rows[0]);
   } catch (err) {
@@ -197,32 +220,33 @@ export const deletePlant = async (req, res) => {
   try {
     const { id } = req.params;
 
-    await db.query(
-      `DELETE FROM plantas WHERE id = $1`,
-      [id]
-    );
+    // Deleta os marcadores vinculados e a planta
+    await db.query(`DELETE FROM marcadores WHERE id_planta = $1`, [id]);
+    const result = await db.query(`DELETE FROM plantas WHERE id = $1 RETURNING id`, [id]);
 
-    res.json({
-      message: "Planta deletada"
-    });
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: "Planta não encontrada" });
+    }
+
+    res.json({ message: "Planta deletada" });
   } catch (err) {
-    res.status(500).json({
-      error: err.message
-    });
+    res.status(500).json({ error: err.message });
   }
 };
 
 export const getFirst36 = async (req, res) => {
   try {
-    const result = await db.query(
-      `SELECT * FROM plantas LIMIT 36`
-    );
+    const result = await db.query(`
+      SELECT p.*, g.nome AS genero
+      FROM plantas p
+      LEFT JOIN genero g ON p.id_genero = g.id
+      ORDER BY p.id ASC
+      LIMIT 36
+    `);
 
     res.json(result.rows);
   } catch (err) {
-    res.status(500).json({
-      error: err.message
-    });
+    res.status(500).json({ error: err.message });
   }
 };
 
@@ -231,20 +255,19 @@ export const getFirstN = async (req, res) => {
     const { count } = req.params;
 
     if (!count || isNaN(count) || count <= 0) {
-      return res.status(400).json({
-        error: "faz favor né bicho"
-      });
+      return res.status(400).json({ error: "Parâmetro count inválido" });
     }
 
-    const result = await db.query(
-      `SELECT * FROM plantas LIMIT $1`,
-      [count]
-    );
+    const result = await db.query(`
+      SELECT p.*, g.nome AS genero
+      FROM plantas p
+      LEFT JOIN genero g ON p.id_genero = g.id
+      ORDER BY p.id ASC
+      LIMIT $1
+    `, [count]);
 
     res.json(result.rows);
   } catch (err) {
-    res.status(500).json({
-      error: err.message
-    });
+    res.status(500).json({ error: err.message });
   }
 };
