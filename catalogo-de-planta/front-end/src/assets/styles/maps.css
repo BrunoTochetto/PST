@@ -303,25 +303,26 @@
 
 
 /* =========================================
-   MODAL
+   MODAL (SELEÇÃO DE PLANTA PARA MARCADOR)
    ========================================= */
 
+.map-modal-overlay,
 .modal {
   position: fixed;
 
   inset: 0;
 
-  width: 100%;
+  width: 100vw;
   height: 100dvh;
 
   padding: 3vh 3vw;
 
   box-sizing: border-box;
 
-  background: rgba(15, 25, 12, 0.48);
+  background: rgba(15, 25, 12, 0.55);
 
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
 
   display: flex;
   justify-content: center;
@@ -337,14 +338,15 @@
    CONTEÚDO DO MODAL
    ========================================= */
 
-.modal-content {
-  width: min(600px, 100%);
+.map-modal-content,
+.map-modal-overlay .modal-content {
+  width: min(680px, 94vw);
 
-  max-height: 90dvh;
+  max-height: 88dvh;
 
   box-sizing: border-box;
 
-  padding: 28px;
+  padding: 24px;
 
   background: #ffffff;
 
@@ -353,18 +355,12 @@
 
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
 
-  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+
+  overflow: hidden;
 
   animation: abrirModal 0.2s ease;
-}
-
-.modal-content h2 {
-  margin: 0;
-
-  color: #1a1a1a;
-
-  font-size: 25px;
-  font-weight: 700;
 }
 
 @keyframes abrirModal {
@@ -381,17 +377,208 @@
 
 
 /* =========================================
-   LISTA DE PLANTAS
+   CABEÇALHO DO MODAL
    ========================================= */
 
-.plant-list {
-  display: grid;
+.map-modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
 
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  padding-bottom: 12px;
 
+  border-bottom: 1px solid #edf1ea;
+}
+
+.map-modal-title-group {
+  flex: 1;
+  min-width: 0;
+}
+
+.map-modal-title-group h2 {
+  margin: 0 0 4px 0;
+
+  color: #1a1a1a;
+
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.map-modal-subtitle {
+  margin: 0;
+
+  color: #64705f;
+
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.map-modal-close-btn {
+  background: #f0f3ed;
+  border: none;
+  border-radius: 50%;
+
+  width: 32px;
+  height: 32px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+
+  color: #555;
+  font-size: 14px;
+  font-weight: bold;
+
+  flex-shrink: 0;
+
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.map-modal-close-btn:hover {
+  background: #e2e8de;
+  color: #111;
+  transform: scale(1.05);
+}
+
+
+/* =========================================
+   BARRA DE BUSCA E AÇÃO NO MODAL
+   ========================================= */
+
+.map-modal-bar {
+  display: flex;
+  align-items: center;
   gap: 12px;
 
-  margin: 20px 0;
+  margin-top: 14px;
+  margin-bottom: 14px;
+}
+
+.map-modal-search-wrapper {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+
+.map-modal-search {
+  width: 100%;
+  height: 42px;
+
+  box-sizing: border-box;
+
+  padding: 0 36px 0 14px;
+
+  background: #f7faf5;
+
+  border: 1px solid #dce4d6;
+  border-radius: 10px;
+
+  font-size: 14px;
+  color: #222;
+
+  outline: none;
+
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.map-modal-search:focus {
+  background: #ffffff;
+  border-color: #246302;
+  box-shadow: 0 0 0 3px rgba(36, 99, 2, 0.12);
+}
+
+.map-modal-search-clear {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+
+  background: transparent;
+  border: none;
+
+  cursor: pointer;
+
+  color: #888;
+  font-size: 13px;
+  padding: 4px;
+}
+
+.map-modal-search-clear:hover {
+  color: #333;
+}
+
+.btn-create-species {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+
+  height: 42px;
+  padding: 0 16px;
+
+  background: #246302;
+  color: #ffffff;
+
+  border: none;
+  border-radius: 10px;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.btn-create-species:hover {
+  background: #1b4902;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(36, 99, 2, 0.25);
+}
+
+.btn-create-species .btn-icon,
+.map-modal-footer-create-btn .btn-icon {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+
+/* =========================================
+   LISTA DE PLANTAS NO MODAL
+   ========================================= */
+
+.map-plant-list,
+.plant-list {
+  flex: 1;
+  min-height: 120px;
+  max-height: 48dvh;
+
+  overflow-y: auto;
+
+  padding: 4px 2px;
+  margin-bottom: 14px;
+
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 12px;
+
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5c3 transparent;
 }
 
 
@@ -415,6 +602,9 @@
 
   overflow: hidden;
 
+  display: flex;
+  flex-direction: column;
+
   transition:
     background-color 0.2s ease,
     border-color 0.2s ease,
@@ -425,16 +615,16 @@
 .plant-item:hover {
   background: #f7faf5;
 
-  border-color: #cbdabd;
+  border-color: #246302;
 
   transform: translateY(-2px);
 
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 6px 15px rgba(36, 99, 2, 0.12);
 }
 
 .plant-item img {
   width: 100%;
-  height: 120px;
+  height: 110px;
 
   display: block;
 
@@ -442,7 +632,7 @@
 
   border-radius: 10px;
 
-  margin-bottom: 9px;
+  margin-bottom: 8px;
 
   background: #edf1ea;
 }
@@ -456,7 +646,7 @@
   display: flex;
   flex-direction: column;
 
-  gap: 4px;
+  gap: 3px;
 
   min-width: 0;
 }
@@ -497,13 +687,70 @@
 
 
 /* =========================================
-   BOTÃO CANCELAR
+   ESTADO VAZIO DO MODAL
    ========================================= */
 
-.modal-content > button {
-  width: 100%;
+.map-modal-empty {
+  grid-column: 1 / -1;
 
-  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  padding: 36px 16px;
+
+  text-align: center;
+  color: #60675d;
+}
+
+.map-modal-empty p {
+  margin: 0 0 14px;
+  font-size: 14px;
+}
+
+.btn-create-species-empty {
+  padding: 10px 18px;
+
+  background: #246302;
+  color: #ffffff;
+
+  border: none;
+  border-radius: 10px;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.btn-create-species-empty:hover {
+  background: #1b4902;
+  transform: translateY(-1px);
+}
+
+
+/* =========================================
+   RODAPÉ DO MODAL (AÇÕES)
+   ========================================= */
+
+.map-modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  padding-top: 14px;
+
+  border-top: 1px solid #edf1ea;
+}
+
+.map-modal-cancel-btn {
+  padding: 11px 20px;
 
   background: #f0f1ef;
   color: #3f443d;
@@ -521,9 +768,38 @@
     transform 0.2s ease;
 }
 
-.modal-content > button:hover {
+.map-modal-cancel-btn:hover {
   background: #e4e6e1;
+  transform: translateY(-1px);
+}
 
+.map-modal-footer-create-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  padding: 11px 20px;
+
+  background: #f0f6eb;
+  color: #246302;
+
+  border: 1px solid #c9ddbe;
+  border-radius: 10px;
+
+  cursor: pointer;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.map-modal-footer-create-btn:hover {
+  background: #e4f0dc;
+  border-color: #246302;
   transform: translateY(-1px);
 }
 
@@ -572,10 +848,11 @@
     bottom: 3vh;
   }
 
+  .map-modal-content,
   .modal-content {
     width: min(560px, 92vw);
 
-    padding: 24px;
+    padding: 20px;
   }
 }
 
@@ -669,30 +946,54 @@
     height: 40px;
   }
 
+  .map-modal-overlay,
   .modal {
-    padding: 5vh 4vw;
+    padding: 12px;
   }
 
+  .map-modal-content,
   .modal-content {
     width: 100%;
 
-    max-height: 90dvh;
+    max-height: 92dvh;
 
-    padding: 20px;
+    padding: 16px;
 
     border-radius: 18px;
   }
 
+  .map-modal-title-group h2,
   .modal-content h2 {
-    font-size: 22px;
+    font-size: 19px;
   }
 
+  .map-modal-subtitle {
+    font-size: 12px;
+  }
+
+  .map-modal-bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+
+  .btn-create-species {
+    width: 100%;
+    height: 38px;
+  }
+
+  .map-plant-list,
   .plant-list {
     grid-template-columns: repeat(2, minmax(0, 1fr));
 
-    gap: 9px;
+    gap: 8px;
 
-    margin: 16px 0;
+    max-height: 48dvh;
+
+    margin: 0 0 10px;
   }
 
   .plant-item {
@@ -702,17 +1003,29 @@
   }
 
   .plant-item img {
-    height: 100px;
+    height: 95px;
 
     border-radius: 8px;
   }
 
   .plant-name {
-    font-size: 13px;
+    font-size: 12px;
   }
 
   .plant-genero {
-    font-size: 11px;
+    font-size: 10px;
+  }
+
+  .map-modal-footer {
+    flex-direction: column-reverse;
+    gap: 8px;
+  }
+
+  .map-modal-cancel-btn,
+  .map-modal-footer-create-btn {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
   }
 }
 
@@ -761,17 +1074,21 @@
     font-size: 25px;
   }
 
+  .map-modal-content,
   .modal-content {
-    padding: 16px;
+    padding: 14px;
 
     border-radius: 16px;
   }
 
+  .map-modal-title-group h2,
   .modal-content h2 {
-    font-size: 20px;
+    font-size: 17px;
   }
 
+  .map-plant-list,
   .plant-list {
+    grid-template-columns: 1fr;
     gap: 7px;
   }
 

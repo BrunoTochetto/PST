@@ -334,7 +334,7 @@ main {
    CONTEÚDO DO MODAL
    ========================================= */
 
-.modal-content {
+.modal-overlay .modal-content {
   width: min(900px, 100%);
 
   box-sizing: border-box;
@@ -563,7 +563,7 @@ main {
     font-size: 18px;
   }
 
-  .modal-content {
+  .modal-overlay .modal-content {
     grid-template-columns: 1fr;
 
     max-width: 600px;
@@ -661,7 +661,7 @@ main {
     padding: 8vh 4vw 4vh;
   }
 
-  .modal-content {
+  .modal-overlay .modal-content {
     width: 100%;
 
     padding: 20px;
@@ -732,7 +732,7 @@ main {
     font-size: 12px;
   }
 
-  .modal-content {
+  .modal-overlay .modal-content {
     padding: 16px;
 
     border-radius: 17px;

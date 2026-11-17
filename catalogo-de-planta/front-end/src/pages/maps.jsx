@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { GoogleMap, Marker, useJsApiLoader } from "@react-google-maps/api";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import axios from "axios";
 import { createPortal } from "react-dom";
@@ -9,6 +9,7 @@ import "../assets/styles/maps.css";
 
 export default function Maps() {
   const apiUrl = import.meta.env.VITE_API_URL;
+  const navigate = useNavigate();
   const [markers, setMarkers] = useState([]);
   const [plants, setPlants] = useState([]);
   const [selected, setSelected] = useState(null);
@@ -17,6 +18,7 @@ export default function Maps() {
 
   const [showModal, setShowModal] = useState(false);
   const [clickedPosition, setClickedPosition] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const { isLoggedIn } = useAuth();
 
@@ -123,8 +125,36 @@ export default function Maps() {
       lng: e.latLng.lng(),
     });
 
+    setSearchTerm("");
     setShowModal(true);
   };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setClickedPosition(null);
+    setSearchTerm("");
+  };
+
+  const handleRedirectCreatePlant = () => {
+    const pos = clickedPosition;
+    setShowModal(false);
+    setClickedPosition(null);
+    setSearchTerm("");
+    if (pos) {
+      navigate(`/cadastrar-planta?lat=${pos.lat}&lng=${pos.lng}`);
+    } else {
+      navigate("/cadastrar-planta");
+    }
+  };
+
+  const filteredPlants = plants.filter((p) => {
+    if (!p.nome_comum) return false;
+    if (!searchTerm.trim()) return true;
+    const term = searchTerm.trim().toLowerCase();
+    const nome = (p.nome_comum || "").toLowerCase();
+    const genero = (p.genero || "").toLowerCase();
+    return nome.includes(term) || genero.includes(term);
+  });
 
   // Cria marcador vinculado a uma planta selecionada (requisição autenticada)
   const handleSelectPlant = async (plant) => {
@@ -267,29 +297,104 @@ export default function Maps() {
       {/* MODAL PARA VINCULAR PLANTA AO CLIQUE NO MAPA */}
       {showModal &&
         createPortal(
-          <div className="modal">
-            <div className="modal-content">
-              <h2>Selecione uma planta para este local</h2>
-
-              <div className="plant-list">
-                {plants.map((p) => (
-                  <div
-                    key={p.id}
-                    className="plant-item"
-                    onClick={() => handleSelectPlant(p)}
-                  >
-                    <img src={p.imagem_url || logo} alt={p.nome_comum} />
-                    <div className="plant-info">
-                      <p className="plant-name">{p.nome_comum}</p>
-                      <p className="plant-genero">{p.genero || 'Sem gênero'}</p>
-                    </div>
-                  </div>
-                ))}
+          <div className="map-modal-overlay" onClick={handleCloseModal}>
+            <div className="map-modal-content" onClick={(e) => e.stopPropagation()}>
+              <div className="map-modal-header">
+                <div className="map-modal-title-group">
+                  <h2>Selecione uma planta para este local</h2>
+                  <p className="map-modal-subtitle">
+                    Escolha uma espécie existente ou cadastre uma nova para este marcador.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  className="map-modal-close-btn"
+                  onClick={handleCloseModal}
+                  title="Fechar"
+                >
+                  ✕
+                </button>
               </div>
 
-              <button onClick={() => setShowModal(false)}>
-                Cancelar
-              </button>
+              <div className="map-modal-bar">
+                <div className="map-modal-search-wrapper">
+                  <input
+                    type="text"
+                    className="map-modal-search"
+                    placeholder="Buscar espécie por nome ou gênero..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    autoFocus
+                  />
+                  {searchTerm && (
+                    <button
+                      type="button"
+                      className="map-modal-search-clear"
+                      onClick={() => setSearchTerm("")}
+                      title="Limpar busca"
+                    >
+                      ✕
+                    </button>
+                  )}
+                </div>
+
+                <button
+                  type="button"
+                  className="btn-create-species"
+                  onClick={handleRedirectCreatePlant}
+                  title="Cadastrar uma espécie que ainda não existe no catálogo"
+                >
+                  <span className="btn-icon">+</span> Nova Espécie
+                </button>
+              </div>
+
+              <div className="map-plant-list">
+                {filteredPlants.length === 0 ? (
+                  <div className="map-modal-empty">
+                    <p>Nenhuma planta encontrada{searchTerm ? ` para "${searchTerm}"` : ""}.</p>
+                    <button
+                      type="button"
+                      className="btn-create-species-empty"
+                      onClick={handleRedirectCreatePlant}
+                    >
+                      Cadastrar nova espécie agora
+                    </button>
+                  </div>
+                ) : (
+                  filteredPlants.map((p) => (
+                    <div
+                      key={p.id}
+                      className="plant-item"
+                      onClick={() => handleSelectPlant(p)}
+                      title={`Selecionar ${p.nome_comum}`}
+                    >
+                      <img src={p.imagem_url || logo} alt={p.nome_comum} />
+                      <div className="plant-info">
+                        <p className="plant-name">{p.nome_comum}</p>
+                        <p className="plant-genero">{p.genero || 'Sem gênero'}</p>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+
+              <div className="map-modal-footer">
+                <button
+                  type="button"
+                  className="map-modal-cancel-btn"
+                  onClick={handleCloseModal}
+                >
+                  Cancelar
+                </button>
+
+                <button
+                  type="button"
+                  className="map-modal-footer-create-btn"
+                  onClick={handleRedirectCreatePlant}
+                >
+                  <span className="btn-icon">+</span> Cadastrar nova espécie
+                </button>
+              </div>
             </div>
           </div>,
           document.body

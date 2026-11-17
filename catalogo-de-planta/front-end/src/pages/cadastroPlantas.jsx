@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate, Navigate } from "react-router-dom";
+import { useNavigate, Navigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import axios from "axios";
 import { GoogleMap, Marker, useJsApiLoader } from "@react-google-maps/api";
@@ -9,6 +9,7 @@ export default function CadastroPlanta() {
   const apiUrl = import.meta.env.VITE_API_URL;
   const { isLoggedIn, user } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -37,6 +38,19 @@ export default function CadastroPlanta() {
   });
 
   useEffect(() => {
+    const latParam = searchParams.get("lat");
+    const lngParam = searchParams.get("lng");
+
+    if (latParam && lngParam) {
+      const parsedLat = parseFloat(latParam);
+      const parsedLng = parseFloat(lngParam);
+      if (!isNaN(parsedLat) && !isNaN(parsedLng)) {
+        setLocation({ lat: parsedLat, lng: parsedLng });
+        setMapCenter({ lat: parsedLat, lng: parsedLng });
+        return;
+      }
+    }
+
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
         (pos) => {
@@ -50,7 +64,7 @@ export default function CadastroPlanta() {
         }
       );
     }
-  }, []);
+  }, [searchParams]);
 
   if (!isLoggedIn) {
     return <Navigate to="/login" replace />;

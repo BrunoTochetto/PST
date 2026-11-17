@@ -35,42 +35,42 @@ VALUES
     1,
     1,
     'Árvore característica da região Sul do Brasil, conhecida também como pinheiro-do-paraná.',
-    'https://upload.wikimedia.org/wikipedia/commons/0/0a/Araucaria_angustifolia.jpg'
+    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQVk3sihm-LvSlSTfBXAk2pi9ISruzZyRXa879a5oaxvTIS1C8G-5I_LHE&s=10'
 ),
 (
     'Eucalipto',
     2,
     2,
     'Árvore de crescimento rápido, bastante utilizada para produção de madeira e papel.',
-    'https://upload.wikimedia.org/wikipedia/commons/6/6f/Eucalyptus_tree.jpg'
+    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTVpIvujjGMbyUCShrsZFuFKt2t36NHxNFbBXurm7TjZa0h2oj_yRkEREoa&s=10'
 ),
 (
     'Pitanga',
     3,
     1,
     'Árvore frutífera nativa da Mata Atlântica, conhecida pelos seus frutos vermelhos.',
-    'https://upload.wikimedia.org/wikipedia/commons/5/5a/Eugenia_uniflora.jpg'
+    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS4Z_jUTfeqAy8xiZa5AHF4MW3LOSOYSA-DoH3DFRyijg&s=10'
 ),
 (
     'Ingá',
     4,
     3,
     'Árvore nativa brasileira que produz frutos com polpa branca e adocicada.',
-    'https://upload.wikimedia.org/wikipedia/commons/8/83/Inga_vera.jpg'
+    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTflxHfGdSbPT1bL-CpZpLVsiNStWncnS2NxgpRuHzObrVcn_YP2AuGRS2l&s=10'
 ),
 (
     'Canela',
     5,
     2,
     'Árvore característica das regiões de Mata Atlântica e Floresta de Araucárias.',
-    'https://upload.wikimedia.org/wikipedia/commons/0/0f/Ocotea_odora.jpg'
+    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSX_459fQhDSEAhmHCBHBXiUdEjvyqy9UoVZJ7s7OJfZVCb3_WbFJMxRW6Q&s=10'
 ),
 (
     'Marcela',
     6,
     3,
     'Planta herbácea conhecida por suas flores amarelas e pelo uso tradicional em infusões.',
-    'https://upload.wikimedia.org/wikipedia/commons/8/87/Achyrocline_satureioides.jpg'
+    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTY6jQBaM-CER30QaKd0cKi6YcEK5aWG5voM7TItXOfww&s=10'
 );
 
 
